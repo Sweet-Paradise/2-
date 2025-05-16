@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Котейка - гостиница для домашних животных</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="hotel-name" id="hotel-name">Котейка</h1>
+                <p class="hotel-location" id="hotel-location">Санкт-Петербург</p>
+                <p class="slogan" id="slogan">Уютная гостиница для ваших питомцев</p>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Главная</a></li>
+                    <li><a href="catalog.html">Номера</a></li>
+                    <li><a href="#reviews">Отзывы</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <div class="container">
+                <h2>Позаботьтесь о комфорте вашего питомца</h2>
+                <p>Профессиональный уход и внимание 24/7</p>
+                <a href="catalog.html" class="btn">Выбрать номер</a>
+            </div>
+        </section>
+
+        <section class="featured-rooms">
+            <div class="container">
+                <h2>Рекомендуемые номера</h2>
+                <div class="rooms-grid" id="featured-rooms">
+                    <!-- Rooms will be loaded from DB via JS -->
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews" id="reviews">
+            <div class="container">
+                <h2>Отзывы наших клиентов</h2>
+                <div class="reviews-slider" id="reviews-slider">
+                    <!-- Reviews will be loaded from DB via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" id="contacts">
+        <div class="container">
+            <div class="footer-content">
+                <div class="contact-info">
+                    <h3>Контакты</h3>
+                    <p class="address" id="address">ул. Котикова, 8, Санкт-Петербург</p>
+                    <p class="working-hours" id="working-hours">Ежедневно с 9:00 до 21:00</p>
+                    <p class="phone" id="phone">+7 (123) 456-78-90</p>
+                    <p class="email" id="email">info@koteika.ru</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" id="social-vk">VK</a>
+                        <a href="#" class="social-link" id="social-tg">Telegram</a>
+                        <a href="#" class="social-link" id="social-inst">Instagram</a>
+                    </div>
+                </div>
+                <div class="footer-map">
+                    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A1234567890abcdef&amp;source=constructor" width="100%" height="400" frameborder="0"></iframe>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Гостиница "Котейка". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="booking-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Забронировать номер</h2>
+            <form id="booking-form">
+                <input type="hidden" id="room-id">
+                <div class="form-group">
+                    <label for="name">Ваше имя</label>
+                    <input type="text" id="name" name="name" required>
+                    <span class="error-message" id="name-error"></span>
+                </div>
+<div class="form-group">
+                    <label for="pet-name">Имя питомца</label>
+                    <input type="text" id="pet-name" name="pet-name" required>
+                    <span class="error-message" id="pet-name-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон</label>
+                    <input type="tel" id="phone" name="phone" required>
+                    <span class="error-message" id="phone-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="error-message" id="email-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="check-in">Дата заезда</label>
+                    <input type="date" id="check-in" name="check-in" required>
+                    <span class="error-message" id="check-in-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="check-out">Дата выезда</label>
+                    <input type="date" id="check-out" name="check-out" required>
+                    <span class="error-message" id="check-out-error"></span>
+                </div>
+                <button type="submit" class="btn">Отправить заявку</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Спасибо!</h2>
+            <p>Ваша заявка успешно отправлена. Мы свяжемся с вами в ближайшее время.</p>
+            <button class="btn" id="close-success">Закрыть</button>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script src="js/booking.js"></script>
+</body>
+</html>
