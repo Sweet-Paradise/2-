@@ -1,0 +1,389 @@
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    initBookingModal();
+    initSuccessModal();
+    setupFormValidation();
+});
+
+/* ========== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ========== */
+
+// Инициализация модального окна бронирования
+function initBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    const closeBtn = modal.querySelector('.close');
+    
+    // Глобальная функция для открытия модального окна
+    window.openBookingModal = function(roomId, roomName = '') {
+        // Устанавливаем ID номера
+        document.getElementById('room-id').value = roomId;
+        
+        // Если передано название номера, обновляем заголовок
+        if (roomName) {
+            modal.querySelector('h2').textContent = `Забронировать номер "${roomName}"`;
+        }
+        
+        // Показываем модальное окно
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Анимация появления
+        modal.style.animation = 'fadeIn 0.3s ease-out';
+        
+        // Устанавливаем минимальную дату заезда (сегодня)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('check-in').min = today;
+        
+        // Сбрасываем предыдущие ошибки
+        resetFormErrors();
+        
+        // Фокусируемся на первом поле
+        setTimeout(() => {
+            document.getElementById('name').focus();
+        }, 100);
+    };
+    
+    // Закрытие модального окна
+    function closeModal() {
+        modal.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+    
+    // Обработчики событий
+    closeBtn.addEventListener('click', closeModal);
+    
+    // Закрытие при клике вне модального окна
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Закрытие по ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            closeModal();
+        }
+    });
+}
+
+// Инициализация модального окна успешного бронирования
+function initSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    const closeBtn = modal.querySelector('.close');
+    const closeSuccessBtn = document.getElementById('close-success');
+    
+    // Закрытие модального окна
+    function closeModal() {
+        modal.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+    
+    // Обработчики событий
+    closeBtn.addEventListener('click', closeModal);
+    closeSuccessBtn.addEventListener('click', closeModal);
+    
+    // Закрытие при клике вне модального окна
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+/* ========== ВАЛИДАЦИЯ ФОРМЫ ========== */
+
+function setupFormValidation() {
+    const form = document.getElementById('booking-form');
+    
+    // Валидация при вводе
+    form.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            validateField(this);
+        });
+    });
+    
+    // Валидация при потере фокуса
+    form.querySelectorAll('input').forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this, true);
+        });
+    });
+    
+    // Обработка отправки формы
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (validateForm()) {
+            submitBookingForm();
+        }
+    });
+    
+    // Связь полей дат
+    setupDateFieldsConnection();
+}
+
+function setupDateFieldsConnection() {
+    const checkInField = document.getElementById('check-in');
+    const checkOutField = document.getElementById('check-out');
+    
+    checkInField.addEventListener('change', function() {
+        if (this.value) {
+            // Устанавливаем минимальную дату выезда (день после заезда)
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOutField.min = nextDay.toISOString().split('T')[0];
+            
+            // Если текущая дата выезда раньше новой минимальной, сбрасываем
+            if (checkOutField.value && checkOutField.value < checkOutField.min) {
+                checkOutField.value = '';
+            }
+        }
+    });
+}
+
+function validateField(field, showError = false) {
+    const errorId = `${field.id}-error`;
+    const errorElement = document.getElementById(errorId);
+    
+    // Сначала скрываем ошибку
+    errorElement.style.display = 'none';
+    
+    // Проверяем поле только если нужно показать ошибку или поле не пустое
+    if (showError || field.value.trim() !== '') {
+        let isValid = true;
+        let errorMessage = '';
+        
+        switch (field.id) {
+            case 'name':
+                isValid = /^[А-Яа-яЁё\s\-\.]+$/u.test(field.value);
+                errorMessage = 'Имя может содержать только русские буквы, пробелы, точки и тире';
+                break;
+                
+            case 'pet-name':
+                isValid = /^[A-Za-zА-Яа-яЁё\s\-]+$/u.test(field.value);
+                errorMessage = 'Имя питомца может содержать только буквы, пробелы и тире';
+                break;
+                
+            case 'phone':
+                isValid = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/.test(field.value);
+                errorMessage = 'Телефон должен быть в формате +7(XXX)XXX-XX-XX';
+                break;
+                
+            case 'email':
+                isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value);
+                errorMessage = 'Пожалуйста, введите корректный email';
+                break;
+                
+            case 'check-in':
+                if (field.value) {
+                    const today = new Date().toISOString().split('T')[0];
+                    isValid = field.value >= today;
+                    errorMessage = 'Дата заезда не может быть раньше сегодняшнего дня';
+                }
+                break;
+                
+            case 'check-out':
+                if (field.value && document.getElementById('check-in').value) {
+                    const checkInDate = new Date(document.getElementById('check-in').value);
+                    const checkOutDate = new Date(field.value);
+                    isValid = checkOutDate > checkInDate;
+                    errorMessage = 'Дата выезда должна быть позже даты заезда';
+                }
+                break;
+        }
+        
+        // Проверка на пустое поле
+        if (field.required && field.value.trim() === '') {
+            isValid = false;
+            errorMessage = 'Это поле обязательно для заполнения';
+        }
+        
+        // Показываем ошибку если нужно
+        if (!isValid && (showError || field.value.trim() !== '')) {
+            showFormError(errorId, errorMessage);
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function validateForm() {
+    let isValid = true;
+    const form = document.getElementById('booking-form');
+    
+    // Сбрасываем предыдущие ошибки
+    resetFormErrors();
+    
+    // Проверяем все поля
+    form.querySelectorAll('input').forEach(input => {
+        if (!validateField(input, true)) {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+function resetFormErrors() {
+    document.querySelectorAll('.error-message').forEach(el => {
+        el.style.display = 'none';
+    });
+}
+
+function showFormError(id, message) {
+    const errorElement = document.getElementById(id);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+    
+    // Анимация ошибки
+    errorElement.style.animation = 'shake 0.5s ease';
+    setTimeout(() => {
+        errorElement.style.animation = '';
+    }, 500);
+    
+    // Прокрутка к ошибке
+    errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ========== ОТПРАВКА ФОРМЫ ========== */
+
+function submitBookingForm() {
+    const form = document.getElementById('booking-form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    // Показываем индикатор загрузки
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+    submitBtn.disabled = true;
+    
+    // Подготавливаем данные формы
+    const formData = {
+        room_id: form.elements['room-id'].value,
+        customer_name: form.elements['name'].value,
+        pet_name: form.elements['pet-name'].value,
+        phone: form.elements['phone'].value,
+        email: form.elements['email'].value,
+        check_in: form.elements['check-in'].value,
+        check_out: form.elements['check-out'].value
+    };
+    
+    // Отправляем данные на сервер
+    fetch('php/api/bookings.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Показываем окно успеха
+            showSuccessModal();
+            
+            // Очищаем форму
+            form.reset();
+            
+            // Можно добавить дополнительные действия, например, обновление списка бронирований
+        } else {
+            // Показываем ошибку сервера
+            showError(data.message || 'Произошла ошибка при бронировании');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('Произошла ошибка при отправке формы. Пожалуйста, попробуйте позже.');
+    })
+    .finally(() => {
+        // Восстанавливаем кнопку
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    });
+}
+
+function showSuccessModal() {
+    const bookingModal = document.getElementById('booking-modal');
+    const successModal = document.getElementById('success-modal');
+    
+    // Закрываем модальное окно бронирования
+    bookingModal.style.display = 'none';
+    
+    // Показываем модальное окно успеха
+    successModal.style.display = 'flex';
+    successModal.style.animation = 'fadeIn 0.3s ease-out';
+    
+    // Фокусируемся на кнопке закрытия
+    setTimeout(() => {
+        document.getElementById('close-success').focus();
+    }, 100);
+}
+
+/* ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ========== */
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'global-error';
+    errorDiv.innerHTML = `
+        <div class="error-content">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>${message}</span>
+            <button class="close-error"><i class="fas fa-times"></i></button>
+        </div>
+    `;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Автоматическое скрытие через 5 секунд
+    const autoClose = setTimeout(() => {
+        closeError(errorDiv);
+    }, 5000);
+    
+    // Закрытие по клику
+    errorDiv.querySelector('.close-error').addEventListener('click', () => {
+        clearTimeout(autoClose);
+        closeError(errorDiv);
+    });
+}
+
+function closeError(errorElement) {
+    errorElement.classList.add('hide');
+    setTimeout(() => {
+        errorElement.remove();
+    }, 300);
+}
+
+/* ========== ИНИЦИАЛИЗАЦИЯ КНОПОК БРОНИРОВАНИЯ ========== */
+
+// Глобальная функция для инициализации кнопок бронирования
+window.initBookButtons = function() {
+    document.querySelectorAll('.book-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const roomId = this.getAttribute('data-room-id');
+            const roomName = this.closest('.room-card').querySelector('h3').textContent;
+            
+            // Анимация нажатия
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+            
+            // Открываем модальное окно
+            openBookingModal(roomId, roomName);
+        });
+    });
+};
+
+// Инициализация при загрузке
+initBookButtons();
