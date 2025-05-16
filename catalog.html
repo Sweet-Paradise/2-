@@ -1,126 +1,574 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог номеров - Котейка</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1 class="hotel-name">Котейка</h1>
-                <p class="hotel-location">Санкт-Петербург</p>
-                <p class="slogan">Уютная гостиница для ваших питомцев</p>
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация компонентов
+    initComponents();
+    
+    // Загрузка данных
+    loadRooms();
+    
+    // Настройка обработчиков событий
+    setupEventListeners();
+});
+
+function initComponents() {
+    // Инициализация слайдеров диапазона
+    initRangeSliders();
+    
+    // Инициализация кнопок бронирования
+    initBookButtons();
+    
+    // Инициализация анимаций при прокрутке
+    initScrollAnimations();
+    
+    // Инициализация тултипов
+    initTooltips();
+}
+
+function loadRooms() {
+    // Показываем состояние загрузки
+    showLoadingState();
+    
+    // Загружаем номера с сервера
+    fetch('php/api/rooms.php')
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.rooms.length > 0) {
+                displayRooms(data.rooms);
+                updateFilterCounts(data.rooms);
+            } else {
+                showNoRoomsMessage();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading rooms:', error);
+            showError('Не удалось загрузить номера. Пожалуйста, попробуйте позже.');
+        });
+}
+
+function showLoadingState() {
+    const roomsContainer = document.getElementById('rooms-grid');
+    roomsContainer.innerHTML = '';
+    
+    // Создаем 6 карточек-заглушек
+    for (let i = 0; i < 6; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'room-card loading';
+        skeleton.innerHTML = `
+            <div class="room-image">
+                <div class="image-placeholder"></div>
             </div>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="index.html">Главная</a></li>
-                    <li><a href="catalog.html" class="active">Номера</a></li>
-                    <li><a href="#reviews">Отзывы</a></li>
-                    <li><a href="#contacts">Контакты</a></li>
-                </ul>
-            </nav>
+            <div class="room-card-content">
+                <h3 class="loading-text"></h3>
+                <p class="room-type loading-text"></p>
+                <p class="room-size loading-text"></p>
+                <p class="room-price loading-text"></p>
+                <button class="btn book-btn loading" disabled>Забронировать</button>
+            </div>
+        `;
+        roomsContainer.appendChild(skeleton);
+    }
+}
+
+function displayRooms(rooms) {
+    const roomsContainer = document.getElementById('rooms-grid');
+    roomsContainer.innerHTML = '';
+    
+    if (rooms.length === 0) {
+        showNoRoomsMessage();
+        return;
+    }
+    
+    rooms.forEach((room, index) => {
+        const roomElement = createRoomElement(room, index);
+        roomsContainer.appendChild(roomElement);
+    });
+    
+    // Инициализация кнопок бронирования для новых элементов
+    initBookButtons();
+}
+
+function createRoomElement(room, index) {
+    const roomElement = document.createElement('div');
+    roomElement.className = 'room-card';
+    roomElement.setAttribute('data-aos', 'fade-up');
+    roomElement.setAttribute('data-aos-delay', index * 50);
+    
+    // Форматируем удобства в список
+    const amenitiesList = room.amenities.split(', ')
+        .map(item => `<li><i class="fas fa-check"></i> ${item}</li>`)
+        .join('');
+    
+    roomElement.innerHTML = `
+        <div class="room-image">
+            <img src="${room.image_url}" alt="${room.name}" loading="lazy">
+            <div class="room-overlay">
+                <button class="btn btn-outline view-details">Подробнее</button>
+            </div>
         </div>
-    </header>
-
-    <main class="main">
-        <section class="catalog">
-            <div class="container">
-                <h2>Каталог номеров</h2>
-                
-                <div class="filters">
-                    <div class="sorting">
-                        <label for="sort">Сортировка:</label>
-                        <select id="sort">
-                            <option value="price_asc">По возрастанию цены</option>
-                            <option value="price_desc">По убыванию цены</option>
-                            <option value="size_asc">По возрастанию размера</option>
-                            <option value="size_desc">По убыванию размера</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <h3>Тип животного</h3>
-                        <div class="filter-options">
-                            <label><input type="checkbox" name="pet-type" value="cat" checked> Кошки</label>
-                            <label><input type="checkbox" name="pet-type" value="dog" checked> Собаки</label>
-                            <label><input type="checkbox" name="pet-type" value="other" checked> Другие</label>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <h3>Размер номера (кв.м)</h3>
-                        <div class="range-slider">
-                            <input type="range" id="size-min" min="2" max="20" value="2">
-                            <input type="range" id="size-max" min="2" max="20" value="20">
-                            <div class="range-values">
-                                <span id="size-min-value">2</span> - <span id="size-max-value">20</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <h3>Цена за сутки (руб)</h3>
-                        <div class="range-slider">
-                            <input type="range" id="price-min" min="500" max="5000" step="100" value="500">
-                            <input type="range" id="price-max" min="500" max="5000" step="100" value="5000">
-                            <div class="range-values">
-                                <span id="price-min-value">500</span> - <span id="price-max-value">5000</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-buttons">
-                        <button id="apply-filters" class="btn">Применить</button>
-                        <button id="reset-filters" class="btn btn-secondary">Сбросить фильтры</button>
-                    </div>
-                </div>
-                
-                <div class="rooms-grid" id="rooms-grid">
-                    <!-- Rooms will be loaded from DB via JS -->
-                </div>
+        <div class="room-card-content">
+            <h3>${room.name}</h3>
+            <div class="room-meta">
+                <span class="room-type"><i class="fas fa-${getPetTypeIcon(room.pet_type)}"></i> Для ${getPetTypeName(room.pet_type)}</span>
+                <span class="room-size"><i class="fas fa-ruler-combined"></i> ${room.size} кв.м</span>
+                <span class="room-capacity"><i class="fas fa-paw"></i> До ${room.max_pets} питомцев</span>
             </div>
-        </section>
-    </main>
-<footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="contact-info">
-                    <h3>Контакты</h3>
-                    <p class="address">ул. Котикова, 8, Санкт-Петербург</p>
-                    <p class="working-hours">Ежедневно с 9:00 до 21:00</p>
-                    <p class="phone">+7 (123) 456-78-90</p>
-                    <p class="email">info@koteika.ru</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">VK</a>
-                        <a href="#" class="social-link">Telegram</a>
-                        <a href="#" class="social-link">Instagram</a>
-                    </div>
-                </div>
-                <div class="footer-map">
-                    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A1234567890abcdef&amp;source=constructor" width="100%" height="400" frameborder="0"></iframe>
-                </div>
+            <div class="amenities-tooltip">
+                <i class="fas fa-info-circle"></i>
+                <span class="tooltip-text">${room.amenities}</span>
             </div>
-            <div class="copyright">
-                <p>&copy; 2023 Гостиница "Котейка". Все права защищены.</p>
+            <div class="room-footer">
+                <p class="room-price">${room.price_per_night} руб/сутки</p>
+                <button class="btn book-btn" data-room-id="${room.id}">Забронировать</button>
             </div>
         </div>
-    </footer>
+        <div class="room-details">
+            <h4>Удобства:</h4>
+            <ul class="amenities-list">
+                ${amenitiesList}
+            </ul>
+            <button class="btn btn-outline close-details">Свернуть</button>
+        </div>
+    `;
+    
+    return roomElement;
+}
 
-    <!-- Booking Modal (same as in index.html) -->
-    <div class="modal" id="booking-modal">
-        <!-- Modal content -->
-    </div>
+function setupEventListeners() {
+    // Обработчики для фильтров
+    document.getElementById('sort').addEventListener('change', applyFilters);
+    document.querySelectorAll('input[name="pet-type"]').forEach(checkbox => {
+        checkbox.addEventListener('change', applyFilters);
+    });
+    
+    // Кнопки фильтров
+    document.getElementById('apply-filters').addEventListener('click', function() {
+        this.classList.add('clicked');
+        setTimeout(() => this.classList.remove('clicked'), 300);
+        applyFilters();
+    });
+    
+    document.getElementById('reset-filters').addEventListener('click', function() {
+        this.classList.add('clicked');
+        setTimeout(() => this.classList.remove('clicked'), 300);
+        resetFilters();
+    });
+    
+    // Обработчики для деталей номеров
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('view-details') || e.target.closest('.view-details')) {
+            showRoomDetails(e);
+        }
+        
+        if (e.target.classList.contains('close-details') || e.target.closest('.close-details')) {
+            hideRoomDetails(e);
+        }
+    });
+}
 
-    <!-- Success Modal (same as in index.html) -->
-    <div class="modal" id="success-modal">
-        <!-- Modal content -->
-    </div>
+function initRangeSliders() {
+    const sizeMin = document.getElementById('size-min');
+    const sizeMax = document.getElementById('size-max');
+    const sizeMinValue = document.getElementById('size-min-value');
+    const sizeMaxValue = document.getElementById('size-max-value');
+    
+    const priceMin = document.getElementById('price-min');
+    const priceMax = document.getElementById('price-max');
+    const priceMinValue = document.getElementById('price-min-value');
+    const priceMaxValue = document.getElementById('price-max-value');
+    
+    // Инициализация слайдеров размера
+    updateRangeValues(sizeMin, sizeMax, sizeMinValue, sizeMaxValue);
+    
+    sizeMin.addEventListener('input', function() {
+        if (parseInt(this.value) > parseInt(sizeMax.value)) {
+            sizeMax.value = this.value;
+        }
+        updateRangeValues(sizeMin, sizeMax, sizeMinValue, sizeMaxValue);
+    });
+    
+    sizeMax.addEventListener('input', function() {
+        if (parseInt(this.value) < parseInt(sizeMin.value)) {
+            sizeMin.value = this.value;
+        }
+        updateRangeValues(sizeMin, sizeMax, sizeMinValue, sizeMaxValue);
+    });
+    
+    // Инициализация слайдеров цены
+    updateRangeValues(priceMin, priceMax, priceMinValue, priceMaxValue);
+    
+    priceMin.addEventListener('input', function() {
+        if (parseInt(this.value) > parseInt(priceMax.value)) {
+            priceMax.value = this.value;
+        }
+        updateRangeValues(priceMin, priceMax, priceMinValue, priceMaxValue);
+    });
+    
+    priceMax.addEventListener('input', function() {
+        if (parseInt(this.value) < parseInt(priceMin.value)) {
+            priceMin.value = this.value;
+        }
+        updateRangeValues(priceMin, priceMax, priceMinValue, priceMaxValue);
+    });
+}
 
-    <script src="js/script.js"></script>
-    <script src="js/booking.js"></script>
-    <script src="js/catalog.js"></script>
-</body>
-</html>
+function updateRangeValues(minInput, maxInput, minValueElement, maxValueElement) {
+    minValueElement.textContent = minInput.value;
+    maxValueElement.textContent = maxInput.value;
+    
+    // Расчет позиции для значений
+    const range = maxInput.max - minInput.min;
+    const minPos = ((minInput.value - minInput.min) / range) * 100;
+    const maxPos = ((maxInput.value - minInput.min) / range) * 100;
+    
+    minValueElement.style.left = `calc(${minPos}% - ${minPos * 0.3}px)`;
+    maxValueElement.style.left = `calc(${maxPos}% - ${maxPos * 0.3}px)`;
+}
+
+function applyFilters() {
+    const sort = document.getElementById('sort').value;
+    const filters = getCurrentFilters();
+    
+    // Показываем индикатор загрузки
+    const roomsContainer = document.getElementById('rooms-grid');
+    roomsContainer.innerHTML = '<div class="loading-overlay"><i class="fas fa-spinner fa-spin"></i></div>';
+    
+    // Задержка для демонстрации загрузки (в реальном проекте можно убрать)
+    setTimeout(() => {
+        fetchFilteredRooms(sort, filters);
+    }, 500);
+}
+
+function getCurrentFilters() {
+    const filters = {};
+    
+    // Типы животных
+    const petTypes = [];
+    document.querySelectorAll('input[name="pet-type"]:checked').forEach(checkbox => {
+        petTypes.push(checkbox.value);
+    });
+    
+    if (petTypes.length > 0) {
+        filters.pet_type = petTypes.join(',');
+    }
+    
+    // Размер номера
+    filters.size_min = document.getElementById('size-min').value;
+    filters.size_max = document.getElementById('size-max').value;
+    
+    // Цена
+    filters.price_min = document.getElementById('price-min').value;
+    filters.price_max = document.getElementById('price-max').value;
+    
+    return filters;
+}
+
+function fetchFilteredRooms(sort, filters) {
+    let url = 'php/api/rooms.php?';
+    const params = new URLSearchParams();
+    
+    params.append('sort', sort);
+    
+    if (filters.pet_type) params.append('pet_type', filters.pet_type);
+    if (filters.size_min) params.append('size_min', filters.size_min);
+    if (filters.size_max) params.append('size_max', filters.size_max);
+    if (filters.price_min) params.append('price_min', filters.price_min);
+    if (filters.price_max) params.append('price_max', filters.price_max);
+    
+    url += params.toString();
+    
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.rooms.length > 0) {
+                displayRooms(data.rooms);
+                updateActiveFiltersCount();
+            } else {
+                showNoRoomsMessage();
+            }
+        })
+        .catch(error => {
+            console.error('Error filtering rooms:', error);
+            showError('Не удалось применить фильтры. Пожалуйста, попробуйте позже.');
+        });
+}
+
+function resetFilters() {
+    // Сброс сортировки
+    document.getElementById('sort').value = 'price_asc';
+    
+    // Сброс чекбоксов
+    document.querySelectorAll('input[name="pet-type"]').forEach(checkbox => {
+        checkbox.checked = true;
+    });
+    
+    // Сброс слайдеров
+    document.getElementById('size-min').value = 2;
+    document.getElementById('size-max').value = 20;
+    document.getElementById('price-min').value = 500;
+    document.getElementById('price-max').value = 5000;
+    
+    // Обновление значений
+    initRangeSliders();
+    
+    // Применение сброшенных фильтров
+    applyFilters();
+}
+
+function updateFilterCounts(rooms) {
+    // Обновляем счетчики для фильтров
+    const petTypes = {
+        cat: 0,
+        dog: 0,
+        other: 0
+    };
+    
+    let minSize = Infinity;
+    let maxSize = -Infinity;
+    let minPrice = Infinity;
+    let maxPrice = -Infinity;
+    
+    rooms.forEach(room => {
+        petTypes[room.pet_type]++;
+        
+        if (room.size < minSize) minSize = room.size;
+        if (room.size > maxSize) maxSize = room.size;
+        if (room.price_per_night < minPrice) minPrice = room.price_per_night;
+        if (room.price_per_night > maxPrice) maxPrice = room.price_per_night;
+    });
+    
+    // Обновляем подписи чекбоксов
+    document.querySelector('input[name="pet-type"][value="cat"]').nextElementSibling.innerHTML += 
+        ` <span class="filter-count">(${petTypes.cat})</span>`;
+    document.querySelector('input[name="pet-type"][value="dog"]').nextElementSibling.innerHTML += 
+        ` <span class="filter-count">(${petTypes.dog})</span>`;
+    document.querySelector('input[name="pet-type"][value="other"]').nextElementSibling.innerHTML += 
+        ` <span class="filter-count">(${petTypes.other})</span>`;
+    
+    // Обновляем диапазоны слайдеров
+    const sizeMin = document.getElementById('size-min');
+    const sizeMax = document.getElementById('size-max');
+    sizeMin.min = minSize;
+    sizeMin.max = maxSize;
+    sizeMax.min = minSize;
+    sizeMax.max = maxSize;
+    sizeMin.value = minSize;
+    sizeMax.value = maxSize;
+    
+    const priceMin = document.getElementById('price-min');
+    const priceMax = document.getElementById('price-max');
+    priceMin.min = minPrice;
+    priceMin.max = maxPrice;
+    priceMax.min = minPrice;
+    priceMax.max = maxPrice;
+    priceMin.value = minPrice;
+    priceMax.value = maxPrice;
+    
+    // Обновляем отображаемые значения
+    document.getElementById('size-min-value').textContent = minSize;
+    document.getElementById('size-max-value').textContent = maxSize;
+    document.getElementById('price-min-value').textContent = minPrice;
+    document.getElementById('price-max-value').textContent = maxPrice;
+}
+
+function updateActiveFiltersCount() {
+    let activeFilters = 0;
+    
+    // Проверяем, отличается ли сортировка от стандартной
+    if (document.getElementById('sort').value !== 'price_asc') {
+        activeFilters++;
+    }
+    
+    // Проверяем чекбоксы
+    const checkedBoxes = document.querySelectorAll('input[name="pet-type"]:checked').length;
+    const totalBoxes = document.querySelectorAll('input[name="pet-type"]').length;
+    if (checkedBoxes !== totalBoxes) {
+        activeFilters++;
+    }
+    
+    // Проверяем слайдеры
+    const sizeMin = document.getElementById('size-min');
+    const sizeMax = document.getElementById('size-max');
+    if (parseInt(sizeMin.value) > parseInt(sizeMin.min) || parseInt(sizeMax.value) < parseInt(sizeMax.max)) {
+        activeFilters++;
+    }
+    
+    const priceMin = document.getElementById('price-min');
+    const priceMax = document.getElementById('price-max');
+    if (parseInt(priceMin.value) > parseInt(priceMin.min) || parseInt(priceMax.value) < parseInt(priceMax.max)) {
+        activeFilters++;
+    }
+    
+    // Обновляем счетчик в UI
+    const filterCounter = document.getElementById('filter-counter');
+    if (activeFilters > 0) {
+        filterCounter.textContent = activeFilters;
+        filterCounter.style.display = 'inline-block';
+    } else {
+        filterCounter.style.display = 'none';
+    }
+}
+
+function showRoomDetails(e) {
+    const roomCard = e.target.closest('.room-card');
+    const details = roomCard.querySelector('.room-details');
+    const image = roomCard.querySelector('.room-image');
+    
+    // Анимация раскрытия
+    details.style.display = 'block';
+    setTimeout(() => {
+        details.style.opacity = '1';
+        details.style.transform = 'translateY(0)';
+        image.style.opacity = '0.3';
+    }, 10);
+    
+    // Прокрутка к деталям
+    setTimeout(() => {
+        details.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300);
+}
+
+function hideRoomDetails(e) {
+    const roomCard = e.target.closest('.room-card');
+    const details = roomCard.querySelector('.room-details');
+    const image = roomCard.querySelector('.room-image');
+    
+    // Анимация закрытия
+    details.style.opacity = '0';
+    details.style.transform = 'translateY(20px)';
+    image.style.opacity = '1';
+    
+    setTimeout(() => {
+        details.style.display = 'none';
+    }, 300);
+}
+
+function initTooltips() {
+    // Инициализация тултипов для удобств
+    document.addEventListener('mouseover', function(e) {
+        if (e.target.classList.contains('amenities-tooltip') || e.target.closest('.amenities-tooltip')) {
+            const tooltip = e.target.classList.contains('amenities-tooltip') ? 
+                e.target : e.target.closest('.amenities-tooltip');
+            const tooltipText = tooltip.querySelector('.tooltip-text');
+            
+            // Позиционирование тултипа
+            const rect = tooltip.getBoundingClientRect();
+            tooltipText.style.left = `${rect.left + rect.width / 2}px`;
+            tooltipText.style.top = `${rect.top - 10}px`;
+            
+            // Показываем тултип
+            tooltipText.style.visibility = 'visible';
+            tooltipText.style.opacity = '1';
+        }
+    });
+    
+    document.addEventListener('mouseout', function(e) {
+        if (e.target.classList.contains('amenities-tooltip') || e.target.closest('.amenities-tooltip')) {
+            const tooltip = e.target.classList.contains('amenities-tooltip') ? 
+                e.target : e.target.closest('.amenities-tooltip');
+            const tooltipText = tooltip.querySelector('.tooltip-text');
+            
+            // Скрываем тултип
+            tooltipText.style.visibility = 'hidden';
+            tooltipText.style.opacity = '0';
+        }
+    });
+}
+
+function initScrollAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('[data-aos]').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+function initBookButtons() {
+    document.querySelectorAll('.book-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const roomId = this.getAttribute('data-room-id');
+            const roomName = this.closest('.room-card').querySelector('h3').textContent;
+            
+            // Анимация нажатия
+            this.classList.add('clicked');
+            setTimeout(() => this.classList.remove('clicked'), 300);
+            
+            // Открываем модальное окно бронирования
+            if (typeof openBookingModal === 'function') {
+                openBookingModal(roomId, roomName);
+            }
+        });
+    });
+}
+
+function showNoRoomsMessage() {
+    const roomsContainer = document.getElementById('rooms-grid');
+    roomsContainer.innerHTML = `
+        <div class="no-rooms-message">
+            <i class="fas fa-search"></i>
+            <h3>Номера не найдены</h3>
+            <p>Попробуйте изменить параметры фильтрации</p>
+            <button class="btn btn-secondary" id="reset-filters-btn">Сбросить фильтры</button>
+        </div>
+    `;
+    
+    document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'global-error';
+    errorDiv.innerHTML = `
+        <div class="error-content">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>${message}</span>
+            <button class="close-error"><i class="fas fa-times"></i></button>
+        </div>
+    `;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Автоматическое скрытие через 5 секунд
+    setTimeout(() => {
+        errorDiv.classList.add('hide');
+        setTimeout(() => errorDiv.remove(), 300);
+    }, 5000);
+    
+    // Закрытие по клику
+    errorDiv.querySelector('.close-error').addEventListener('click', () => {
+        errorDiv.classList.add('hide');
+        setTimeout(() => errorDiv.remove(), 300);
+    });
+}
+
+// Вспомогательные функции
+function getPetTypeName(petType) {
+    switch (petType) {
+        case 'cat': return 'кошек';
+        case 'dog': return 'собак';
+        case 'other': return 'других животных';
+        default: return petType;
+    }
+}
+
+function getPetTypeIcon(petType) {
+    switch (petType) {
+        case 'cat': return 'cat';
+        case 'dog': return 'dog';
+        case 'other': return 'paw';
+        default: return 'paw';
+    }
+}
