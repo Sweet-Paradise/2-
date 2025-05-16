@@ -5,69 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Котейка - Каталог номеров</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Дополнительные стили для страницы поиска */
-        .search-header {
-            background-image: url('img/search-bg.jpg');
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            margin-bottom: 50px;
-        }
-        
-        .search-header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-        }
-        
-        .search-header-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .search-header h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        
-        .sorting {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 30px;
-            align-items: center;
-        }
-        
-        .sorting label {
-            margin-right: 15px;
-            font-weight: bold;
-        }
-        
-        .sorting select {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 2px solid #ddd;
-        }
-    </style>
 </head>
 <body>
-    <!-- Шапка -->
     <header>
         <div class="container">
-            <div class="logo" id="hotel-name">Котейка</div>
-            <div class="slogan" id="hotel-slogan">Отель для пушистых друзей</div>
+            <div class="logo">Котейка</div>
+            <div class="slogan">Отель для пушистых друзей</div>
         </div>
     </header>
     
-    <!-- Навигация -->
     <nav>
         <div class="container">
             <ul>
@@ -79,18 +25,15 @@
             </ul>
         </div>
     </nav>
-    
-    <!-- Баннер поиска -->
-    <section class="search-header">
-        <div class="search-header-content">
+
+    <section class="hero" style="background-image: url('img/search-bg.jpg')">
+        <div class="hero-content">
             <h1>Наши номера</h1>
             <p>Выберите идеальный вариант для вашего питомца</p>
         </div>
     </section>
-    
-    <!-- Основное содержимое -->
+
     <main class="container">
-        <!-- Фильтры -->
         <div class="filters">
             <h2>Фильтры</h2>
             <div class="filter-row">
@@ -128,7 +71,6 @@
             </div>
         </div>
         
-        <!-- Сортировка -->
         <div class="sorting">
             <label for="sort-by">Сортировка:</label>
             <select id="sort-by">
@@ -139,15 +81,13 @@
             </select>
         </div>
         
-        <!-- Список номеров -->
         <section class="rooms">
             <div class="room-grid" id="all-rooms">
                 <!-- Номера будут загружены через JavaScript -->
             </div>
         </section>
     </main>
-    
-    <!-- Подвал -->
+
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -163,7 +103,7 @@
             </div>
         </div>
     </footer>
-    
+
     <!-- Модальное окно бронирования -->
     <div class="modal" id="booking-modal">
         <div class="modal-content">
@@ -208,21 +148,9 @@
             </form>
         </div>
     </div>
-    
-    <!-- Модальное окно успешного бронирования -->
-    <div class="modal" id="success-modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Спасибо за бронирование!</h2>
-            <p style="text-align: center; margin-bottom: 30px;">Ваш номер успешно забронирован. Мы отправили подтверждение на вашу электронную почту.</p>
-            <div class="form-buttons">
-                <button class="btn close-modal">Отлично!</button>
-            </div>
-        </div>
-    </div>
-    
+
     <script>
-        // Данные номеров (в реальном проекте будут загружаться с сервера)
+        // Данные номеров
         const roomsData = [
             {
                 id: 1,
@@ -285,7 +213,7 @@
                 image: "img/room6.jpg"
             }
         ];
-        
+
         // Загрузка номеров при загрузке страницы
         function loadRooms() {
             const roomsContainer = document.getElementById('all-rooms');
@@ -313,27 +241,16 @@
             document.querySelectorAll('.book-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const roomId = this.getAttribute('data-id');
-                    openBookingModal(roomId);
+                    document.getElementById('room-id').value = roomId;
+                    document.getElementById('booking-modal').style.display = 'flex';
+                    
+                    // Установка минимальной даты заезда (сегодня)
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('check-in').min = today;
                 });
             });
         }
-        
-        // Функция для открытия модального окна бронирования
-        function openBookingModal(roomId) {
-            const modal = document.getElementById('booking-modal');
-            document.getElementById('room-id').value = roomId;
-            modal.style.display = 'flex';
-            
-            // Установка минимальной даты заезда (сегодня)
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('check-in').min = today;
-            
-            // Сброс ошибок
-            document.querySelectorAll('.error').forEach(error => {
-                error.style.display = 'none';
-            });
-        }
-        
+
         // Применение фильтров
         document.getElementById('apply-filters').addEventListener('click', function() {
             const typeFilter = document.getElementById('room-type').value;
@@ -358,7 +275,7 @@
             
             renderFilteredRooms(filteredRooms);
         });
-        
+
         // Сброс фильтров
         document.getElementById('reset-filters').addEventListener('click', function() {
             document.getElementById('room-type').value = 'all';
@@ -368,7 +285,7 @@
             
             renderFilteredRooms(roomsData);
         });
-        
+
         // Сортировка
         document.getElementById('sort-by').addEventListener('change', function() {
             const sortValue = this.value;
@@ -391,7 +308,7 @@
             
             renderFilteredRooms(sortedRooms);
         });
-        
+
         // Функция для отрисовки отфильтрованных номеров
         function renderFilteredRooms(rooms) {
             const roomsContainer = document.getElementById('all-rooms');
@@ -424,11 +341,16 @@
             document.querySelectorAll('.book-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const roomId = this.getAttribute('data-id');
-                    openBookingModal(roomId);
+                    document.getElementById('room-id').value = roomId;
+                    document.getElementById('booking-modal').style.display = 'flex';
+                    
+                    // Установка минимальной даты заезда (сегодня)
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('check-in').min = today;
                 });
             });
         }
-        
+
         // Валидация формы бронирования
         document.getElementById('booking-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -505,22 +427,11 @@
                 checkOutError.style.display = 'none';
             }
             
-            // Если все данные валидны, показываем окно успеха
+            // Если все данные валидны, показываем сообщение
             if (isValid) {
+                alert('Бронирование успешно отправлено!');
                 document.getElementById('booking-modal').style.display = 'none';
-                document.getElementById('success-modal').style.display = 'flex';
                 this.reset();
-                
-                // В реальном проекте здесь будет отправка данных на сервер
-                console.log('Данные бронирования:', {
-                    roomId: document.getElementById('room-id').value,
-                    name: name,
-                    petName: petName,
-                    phone: phone,
-                    email: email,
-                    checkIn: checkIn,
-                    checkOut: checkOut
-                });
             }
         });
         
