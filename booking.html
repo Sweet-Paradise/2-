@@ -5,126 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Котейка - Мои бронирования</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Дополнительные стили для страницы бронирований */
-        .booking-header {
-            background-image: url('img/booking-bg.jpg');
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            margin-bottom: 50px;
-        }
-        
-        .booking-header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-        }
-        
-        .booking-header-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .booking-header h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        
-        .bookings-list {
-            background-color: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-        
-        .booking-item {
-            display: flex;
-            flex-wrap: wrap;
-            border-bottom: 1px solid #eee;
-            padding: 20px 0;
-            align-items: center;
-        }
-        
-        .booking-item:last-child {
-            border-bottom: none;
-        }
-        
-        .booking-image {
-            width: 150px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-right: 30px;
-        }
-        
-        .booking-info {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .booking-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: var(--dark-color);
-        }
-        
-        .booking-dates {
-            margin-bottom: 10px;
-            color: #666;
-        }
-        
-        .booking-status {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-left: auto;
-        }
-        
-        .status-pending {
-            background-color: #FFF3CD;
-            color: #856404;
-        }
-        
-        .status-confirmed {
-            background-color: #D4EDDA;
-            color: #155724;
-        }
-        
-        .status-cancelled {
-            background-color: #F8D7DA;
-            color: #721C24;
-        }
-        
-        .no-bookings {
-            text-align: center;
-            padding: 50px 0;
-        }
-        
-        .no-bookings p {
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-    </style>
 </head>
 <body>
-    <!-- Шапка -->
     <header>
         <div class="container">
-            <div class="logo" id="hotel-name">Котейка</div>
-            <div class="slogan" id="hotel-slogan">Отель для пушистых друзей</div>
+            <div class="logo">Котейка</div>
+            <div class="slogan">Отель для пушистых друзей</div>
         </div>
     </header>
     
-    <!-- Навигация -->
     <nav>
         <div class="container">
             <ul>
@@ -136,16 +25,14 @@
             </ul>
         </div>
     </nav>
-    
-    <!-- Баннер бронирований -->
-    <section class="booking-header">
-        <div class="booking-header-content">
+
+    <section class="hero" style="background-image: url('img/booking-bg.jpg')">
+        <div class="hero-content">
             <h1>Мои бронирования</h1>
             <p>Здесь вы можете посмотреть статус ваших заказов</p>
         </div>
     </section>
-    
-    <!-- Основное содержимое -->
+
     <main class="container">
         <div class="bookings-list" id="bookings-container">
             <!-- Бронирования будут загружены через JavaScript -->
@@ -155,8 +42,7 @@
             </div>
         </div>
     </main>
-    
-    <!-- Подвал -->
+
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -172,7 +58,7 @@
             </div>
         </div>
     </footer>
-    
+
     <script>
         // Данные бронирований (в реальном проекте будут загружаться с сервера)
         const bookingsData = [
@@ -191,7 +77,41 @@
             }
             */
         ];
-        
+
+        // Данные номеров для связи с бронированиями
+        const roomsData = [
+            {
+                id: 1,
+                title: "Эконом для котика",
+                image: "img/room1.jpg"
+            },
+            {
+                id: 2,
+                title: "Стандарт для кота",
+                image: "img/room2.jpg"
+            },
+            {
+                id: 3,
+                title: "Люкс для кошки",
+                image: "img/room3.jpg"
+            },
+            {
+                id: 4,
+                title: "Эконом для щенка",
+                image: "img/room4.jpg"
+            },
+            {
+                id: 5,
+                title: "Стандарт для собаки",
+                image: "img/room5.jpg"
+            },
+            {
+                id: 6,
+                title: "Люкс для пса",
+                image: "img/room6.jpg"
+            }
+        ];
+
         // Загрузка бронирований при загрузке страницы
         function loadBookings() {
             const bookingsContainer = document.getElementById('bookings-container');
@@ -215,8 +135,7 @@
                 // Получаем данные о номере
                 const room = roomsData.find(r => r.id === booking.roomId) || {
                     title: booking.title,
-                    image: booking.image,
-                    features: []
+                    image: booking.image
                 };
                 
                 // Определяем статус
@@ -253,7 +172,7 @@
                 bookingsContainer.appendChild(bookingItem);
             });
         }
-        
+
         // Форматирование даты
         function formatDate(dateString) {
             const options = { day: 'numeric', month: 'long' };
