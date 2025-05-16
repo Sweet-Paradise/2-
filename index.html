@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Котейка - гостиница для домашних животных</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 </head>
@@ -13,273 +13,258 @@
     <!-- Шапка сайта -->
     <header class="header">
         <div class="container">
-            <div class="header-content">
+            <div class="header-inner">
                 <img src="images/logo.png" alt="Котейка" class="logo">
-                <p class="hotel-location">Санкт-Петербург</p>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#hero" class="active">Главная</a></li>
+                        <li><a href="#rooms">Номера</a></li>
+                        <li><a href="#about">О нас</a></li>
+                        <li><a href="#reviews">Отзывы</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                        <li><a href="tel:+71234567890" class="phone-link"><i class="fas fa-phone"></i> +7 (123) 456-78-90</a></li>
+                    </ul>
+                </nav>
+                <button class="menu-toggle"><i class="fas fa-bars"></i></button>
             </div>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="index.html" class="active"><i class="fas fa-home"></i> Главная</a></li>
-                    <li><a href="catalog.html"><i class="fas fa-bed"></i> Номера</a></li>
-                    <li><a href="#reviews"><i class="fas fa-comment"></i> Отзывы</a></li>
-                    <li><a href="#contacts"><i class="fas fa-address-book"></i> Контакты</a></li>
-                </ul>
-            </nav>
         </div>
     </header>
 
-    <!-- Основное содержимое -->
-    <main class="main">
-        <!-- Герой-секция -->
-        <section class="hero" style="background-image: url('images/hero-bg.jpg')">
-            <div class="container">
-                <h2 data-aos="fade-up">Позаботьтесь о комфорте вашего питомца</h2>
-                <p data-aos="fade-up" data-aos-delay="100">Профессиональный уход и внимание 24/7</p>
-                <a href="catalog.html" class="btn" data-aos="fade-up" data-aos-delay="200">Выбрать номер</a>
-            </div>
-            <div class="hero-wave"></div>
-        </section>
-
-        <!-- Рекомендуемые номера -->
-        <section class="section featured-rooms">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Рекомендуемые номера</h2>
-                <div class="rooms-grid" id="featured-rooms">
-                    <div class="room-card" data-aos="fade-up">
-                        <div class="room-image">
-                            <img src="images/room1.jpg" alt="Комфорт для кошки">
-                        </div>
-                        <div class="room-card-content">
-                            <h3>Комфорт для кошки</h3>
-                            <p class="room-type"><i class="fas fa-cat"></i> Для кошек</p>
-                            <p class="room-size"><i class="fas fa-ruler-combined"></i> 5 кв.м</p>
-                            <p class="room-price">1200 руб/сутки</p>
-                            <button class="btn book-btn" data-room-id="1">Забронировать</button>
-                        </div>
-                    </div>
-                    
-                    <div class="room-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="room-image">
-                            <img src="images/room2.jpg" alt="Люкс для кошки">
-                        </div>
-                        <div class="room-card-content">
-                            <h3>Люкс для кошки</h3>
-                            <p class="room-type"><i class="fas fa-cat"></i> Для кошек</p>
-                            <p class="room-size"><i class="fas fa-ruler-combined"></i> 8 кв.м</p>
-                            <p class="room-price">1800 руб/сутки</p>
-                            <button class="btn book-btn" data-room-id="2">Забронировать</button>
-                        </div>
-                    </div>
-                    
-                    <div class="room-card" data-aos="fade-up" data-aos-delay="200">
-                        <div class="room-image">
-                            <img src="images/room3.jpg" alt="Стандарт для собаки">
-                        </div>
-                        <div class="room-card-content">
-                            <h3>Стандарт для собаки</h3>
-                            <p class="room-type"><i class="fas fa-dog"></i> Для собак</p>
-                            <p class="room-size"><i class="fas fa-ruler-combined"></i> 6 кв.м</p>
-                            <p class="room-price">1500 руб/сутки</p>
-                            <button class="btn book-btn" data-room-id="3">Забронировать</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center" data-aos="fade-up">
-                    <a href="catalog.html" class="btn btn-secondary">Все номера</a>
+    <!-- Герой-секция -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Гостиница для ваших питомцев</h1>
+                <p class="subtitle">Комфортное проживание и профессиональный уход</p>
+                <div class="hero-buttons">
+                    <a href="#rooms" class="btn btn-primary">Выбрать номер</a>
+                    <a href="#contacts" class="btn btn-outline">Контакты</a>
                 </div>
             </div>
-        </section>
+        </div>
+        <div class="hero-overlay"></div>
+    </section>
 
-        <!-- О нас -->
-        <section class="section about" style="background-image: url('images/about-us.jpg')">
-            <div class="container">
-                <div class="about-content" data-aos="fade-right">
+    <!-- Номера -->
+    <section class="section rooms" id="rooms">
+        <div class="container">
+            <h2 class="section-title">Наши номера</h2>
+            <p class="section-subtitle">Комфортные условия для ваших любимцев</p>
+            
+            <div class="rooms-grid">
+                <!-- Номер 1 -->
+                <div class="room-card">
+                    <div class="room-image">
+                        <img src="images/room1.jpg" alt="Комфорт для кошки">
+                        <div class="room-badge">Хит</div>
+                    </div>
+                    <div class="room-info">
+                        <h3>Комфорт для кошки</h3>
+                        <div class="room-features">
+                            <span><i class="fas fa-ruler-combined"></i> 5 м²</span>
+                            <span><i class="fas fa-paw"></i> 1 питомец</span>
+                        </div>
+                        <div class="room-price">
+                            <span class="price">1200 ₽</span>
+                            <span class="period">/ сутки</span>
+                        </div>
+                        <a href="#booking" class="btn btn-small">Забронировать</a>
+                    </div>
+                </div>
+                
+                <!-- Номер 2 -->
+                <div class="room-card">
+                    <div class="room-image">
+                        <img src="images/room2.jpg" alt="Люкс для кошки">
+                    </div>
+                    <div class="room-info">
+                        <h3>Люкс для кошки</h3>
+                        <div class="room-features">
+                            <span><i class="fas fa-ruler-combined"></i> 8 м²</span>
+                            <span><i class="fas fa-paw"></i> 1-2 питомца</span>
+                        </div>
+                        <div class="room-price">
+                            <span class="price">1800 ₽</span>
+                            <span class="period">/ сутки</span>
+                        </div>
+                        <a href="#booking" class="btn btn-small">Забронировать</a>
+                    </div>
+                </div>
+                
+                <!-- Номер 3 -->
+                <div class="room-card">
+                    <div class="room-image">
+                        <img src="images/room3.jpg" alt="Стандарт для собаки">
+                    </div>
+                    <div class="room-info">
+                        <h3>Стандарт для собаки</h3>
+                        <div class="room-features">
+                            <span><i class="fas fa-ruler-combined"></i> 6 м²</span>
+                            <span><i class="fas fa-paw"></i> 1 питомец</span>
+                        </div>
+                        <div class="room-price">
+                            <span class="price">1500 ₽</span>
+                            <span class="period">/ сутки</span>
+                        </div>
+                        <a href="#booking" class="btn btn-small">Забронировать</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="catalog.html" class="btn btn-secondary">Все номера</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- О нас -->
+    <section class="section about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="images/about-us.jpg" alt="О нашей гостинице">
+                </div>
+                <div class="about-content">
                     <h2 class="section-title">О нашей гостинице</h2>
-                    <p>Мы - команда профессиональных зоотехников и ветеринаров, которые обожают животных. Каждый питомец получает у нас индивидуальный уход и внимание.</p>
-                    <div class="benefits-grid">
-                        <div class="benefit-item">
-                            <img src="images/icon-cat.png" alt="Кошки">
-                            <p>Специализированные номера для кошек</p>
-                        </div>
-                        <div class="benefit-item">
-                            <img src="images/icon-dog.png" alt="Собаки">
-                            <p>Просторные вольеры для собак</p>
-                        </div>
-                        <div class="benefit-item">
-                            <img src="images/icon-food.png" alt="Питание">
-                            <p>Индивидуальное питание</p>
-                        </div>
-                        <div class="benefit-item">
-                            <img src="images/icon-walk.png" alt="Прогулки">
-                            <p>Регулярные прогулки</p>
-                        </div>
-                    </div>
+                    <p>Мы предоставляем комфортные условия для временного проживания ваших питомцев с профессиональным уходом и вниманием.</p>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-circle"></i> Просторные и чистые номера</li>
+                        <li><i class="fas fa-check-circle"></i> Круглосуточный присмотр</li>
+                        <li><i class="fas fa-check-circle"></i> Профессиональные грумеры</li>
+                        <li><i class="fas fa-check-circle"></i> Регулярные фотоотчеты</li>
+                    </ul>
+                    <a href="#contacts" class="btn btn-outline">Узнать больше</a>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Отзывы -->
-        <section class="section reviews" id="reviews">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Отзывы наших клиентов</h2>
-                <div class="reviews-slider" id="reviews-slider">
-                    <div class="review-card" data-aos="fade-left">
-                        <div class="review-header">
-                            <img src="images/testimonials/avatar1.jpg" alt="Анна" class="review-avatar">
-                            <div>
-                                <h4>Анна</h4>
-                                <div class="rating">★★★★★</div>
+    <!-- Отзывы -->
+    <section class="section reviews" id="reviews">
+        <div class="container">
+            <h2 class="section-title">Отзывы клиентов</h2>
+            <p class="section-subtitle">Что говорят о нас владельцы питомцев</p>
+            
+            <div class="reviews-slider">
+                <!-- Отзыв 1 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <img src="images/testimonials/avatar1.jpg" alt="Анна" class="review-avatar">
+                        <div class="review-author">
+                            <h4>Анна</h4>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
                             </div>
                         </div>
-                        <p class="pet-info">Питомец: Барсик (кошка)</p>
-                        <p class="review-text">Оставляла кота на 2 недели. Персонал очень внимательный, присылали фото каждый день. Кот вернулся довольный и ухоженный!</p>
-                        <p class="review-date">15 мая 2023</p>
                     </div>
-                    
-                    <div class="review-card" data-aos="fade-left" data-aos-delay="100">
-                        <div class="review-header">
-                            <img src="images/testimonials/avatar2.jpg" alt="Дмитрий" class="review-avatar">
-                            <div>
-                                <h4>Дмитрий</h4>
-                                <div class="rating">★★★★★</div>
+                    <div class="review-content">
+                        <p>Оставляла кота на 2 недели. Персонал очень внимательный, присылали фото каждый день. Кот вернулся довольный и ухоженный!</p>
+                    </div>
+                    <div class="review-footer">
+                        <span class="review-date">15 мая 2023</span>
+                        <span class="review-pet">Питомец: Барсик (кошка)</span>
+                    </div>
+                </div>
+                
+                <!-- Отзыв 2 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <img src="images/testimonials/avatar2.jpg" alt="Дмитрий" class="review-avatar">
+                        <div class="review-author">
+                            <h4>Дмитрий</h4>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
                             </div>
                         </div>
-                        <p class="pet-info">Питомец: Рекс (собака)</p>
-                        <p class="review-text">Впервые оставил собаку в гостинице. Очень переживал, но Рекс отлично провел время, даже не хотел уходить!</p>
-                        <p class="review-date">3 июня 2023</p>
                     </div>
-                    
-                    <div class="review-card" data-aos="fade-left" data-aos-delay="200">
-                        <div class="review-header">
-                            <img src="images/testimonials/avatar3.jpg" alt="Елена" class="review-avatar">
-                            <div>
-                                <h4>Елена</h4>
-                                <div class="rating">★★★★☆</div>
-                            </div>
-                        </div>
-                        <p class="pet-info">Питомец: Марсик (кошка)</p>
-                        <p class="review-text">Хорошие условия, чистые номера. Единственное - хотелось бы больше игровых комплексов для активных кошек.</p>
-                        <p class="review-date">22 апреля 2023</p>
+                    <div class="review-content">
+                        <p>Впервые оставил собаку в гостинице. Очень переживал, но Рекс отлично провел время, даже не хотел уходить!</p>
+                    </div>
+                    <div class="review-footer">
+                        <span class="review-date">3 июня 2023</span>
+                        <span class="review-pet">Питомец: Рекс (собака)</span>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Галерея -->
-        <section class="section gallery">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Наши гости</h2>
-                <div class="gallery-grid">
-                    <div class="gallery-item" data-aos="zoom-in">
-                        <img src="images/gallery1.jpg" alt="Питомец в номере">
+    <!-- Контакты -->
+    <section class="section contacts" id="contacts">
+        <div class="container">
+            <div class="contacts-grid">
+                <div class="contacts-info">
+                    <h2 class="section-title">Контакты</h2>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Санкт-Петербург, ул. Котикова, 8</span>
                     </div>
-                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
-                        <img src="images/gallery2.jpg" alt="Питомец в номере">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:+71234567890">+7 (123) 456-78-90</a>
                     </div>
-                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                        <img src="images/gallery3.jpg" alt="Питомец в номере">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:info@koteika.ru">info@koteika.ru</a>
                     </div>
-                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
-                        <img src="images/gallery4.jpg" alt="Питомец в номере">
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Ежедневно с 9:00 до 21:00</span>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Услуги -->
-        <section class="section services" style="background-image: url('images/services.jpg')">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Дополнительные услуги</h2>
-                <div class="services-grid">
-                    <div class="service-card" data-aos="fade-up">
-                        <i class="fas fa-cut"></i>
-                        <h3>Груминг</h3>
-                        <p>Профессиональный уход за шерстью вашего питомца</p>
-                    </div>
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-                        <i class="fas fa-stethoscope"></i>
-                        <h3>Ветеринарный осмотр</h3>
-                        <p>Контроль здоровья питомца во время пребывания</p>
-                    </div>
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-                        <i class="fas fa-camera"></i>
-                        <h3>Фотоотчеты</h3>
-                        <p>Регулярные фото и видео вашего любимца</p>
-                    </div>
+                <div class="contacts-map">
+                    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A1234567890abcdef&amp;source=constructor" frameborder="0"></iframe>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
-    <!-- Подвал сайта -->
-    <footer class="footer" id="contacts" style="background-image: url('images/contact-bg.jpg')">
+    <!-- Подвал -->
+    <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="contact-info">
-                    <h3>Контакты</h3>
-                    <p class="address"><i class="fas fa-map-marker-alt"></i> ул. Котикова, 8, Санкт-Петербург</p>
-                    <p class="working-hours"><i class="fas fa-clock"></i> Ежедневно с 9:00 до 21:00</p>
-                    <p class="phone"><i class="fas fa-phone"></i> +7 (123) 456-78-90</p>
-                    <p class="email"><i class="fas fa-envelope"></i> info@koteika.ru</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-vk"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
-                    </div>
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="Котейка" class="logo">
+                    <p>Гостиница для домашних питомцев</p>
                 </div>
-                <div class="footer-map">
-                    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A1234567890abcdef&amp;source=constructor" width="100%" height="100%" frameborder="0"></iframe>
+                <div class="footer-links">
+                    <h3>Меню</h3>
+                    <ul>
+                        <li><a href="#hero">Главная</a></li>
+                        <li><a href="#rooms">Номера</a></li>
+                        <li><a href="#about">О нас</a></li>
+                        <li><a href="#reviews">Отзывы</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contacts">
+                    <h3>Контакты</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Санкт-Петербург, ул. Котикова, 8</p>
+                    <p><i class="fas fa-phone"></i> +7 (123) 456-78-90</p>
+                    <p><i class="fas fa-envelope"></i> info@koteika.ru</p>
                 </div>
             </div>
-            <div class="copyright">
+            <div class="footer-bottom">
                 <p>&copy; 2023 Гостиница "Котейка". Все права защищены.</p>
             </div>
         </div>
     </footer>
 
     <!-- Кнопка "Наверх" -->
-    <div class="scroll-top" id="scrollTop">
-        <i class="fas fa-arrow-up"></i>
-    </div>
-
-    <!-- Модальное окно бронирования -->
-    <div class="modal" id="booking-modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Забронировать номер</h2>
-            <form id="booking-form">
-                <input type="hidden" id="room-id">
-                <div class="form-group">
-                    <label for="name"><i class="fas fa-user"></i> Ваше имя</label>
-                    <input type="text" id="name" name="name" required placeholder="Иванов Иван">
-                </div>
-                <div class="form-group">
-                    <label for="pet-name"><i class="fas fa-paw"></i> Имя питомца</label>
-                    <input type="text" id="pet-name" name="pet-name" required placeholder="Мурзик">
-                </div>
-                <div class="form-group">
-                    <label for="phone"><i class="fas fa-phone"></i> Телефон</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="+7(XXX)XXX-XX-XX">
-                </div>
-                <div class="form-group">
-                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="email" name="email" required placeholder="example@mail.com">
-                </div>
-                <div class="form-group">
-                    <label for="check-in"><i class="fas fa-calendar-day"></i> Дата заезда</label>
-                    <input type="date" id="check-in" name="check-in" required>
-                </div>
-                <div class="form-group">
-                    <label for="check-out"><i class="fas fa-calendar-day"></i> Дата выезда</label>
-                    <input type="date" id="check-out" name="check-out" required>
-                </div>
-                <button type="submit" class="btn btn-accent">
-                    <i class="fas fa-paper-plane"></i> Отправить заявку
-                </button>
-            </form>
-        </div>
-    </div>
+    <a href="#hero" class="scroll-top"><i class="fas fa-arrow-up"></i></a>
 
     <!-- Подключение JavaScript -->
     <script src="js/script.js"></script>
