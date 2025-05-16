@@ -1,635 +1,28 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация всех компонентов
-    initComponents();
+    // ======================
+    // Мобильное меню
+    // ======================
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mainNav = document.querySelector('.main-nav');
+    const navLinks = document.querySelectorAll('.main-nav a');
     
-    // Загрузка данных
-    loadData();
-    
-    // Инициализация обработчиков событий
-    initEventListeners();
-});
-
-function initComponents() {
-    // Инициализация анимаций при прокрутке
-    initScrollAnimations();
-    
-    // Инициализация кнопки "Наверх"
-    initScrollToTop();
-    
-    // Инициализация модальных окон
-    initModals();
-    
-    // Инициализация слайдера отзывов
-    initReviewsSlider();
-    
-    // Инициализация плавной прокрутки
-    initSmoothScroll();
-    
-    // Инициализация анимации кнопок
-    animateButtons();
-}
-
-function loadData() {
-    // Загрузка информации о гостинице
-    loadHotelInfo();
-    
-    // Загрузка рекомендуемых номеров
-    loadFeaturedRooms();
-    
-    // Загрузка отзывов
-    loadReviews();
-}
-
-function initEventListeners() {
-    // Обработчик для кнопки "Наверх"
-    document.getElementById('scrollTop').addEventListener('click', scrollToTop);
-    
-    // Обработчик для прокрутки страницы (показ/скрытие кнопки "Наверх")
-    window.addEventListener('scroll', toggleScrollTopButton);
-}
-
-/* ========== АНИМАЦИИ И ИНТЕРАКТИВ ========== */
-
-function initScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('aos-animate');
-                
-                // Добавляем задержку для последовательных анимаций
-                if (entry.target.dataset.aosDelay) {
-                    entry.target.style.transitionDelay = entry.target.dataset.aosDelay;
-                }
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('[data-aos]').forEach(el => {
-        observer.observe(el);
+    menuToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+        mainNav.classList.toggle('active');
+        document.body.classList.toggle('no-scroll');
     });
-}
-
-function initScrollToTop() {
-    const scrollTopBtn = document.getElementById('scrollTop');
-    scrollTopBtn.style.display = 'none';
-}
-
-function toggleScrollTopButton() {
-    const scrollTopBtn = document.getElementById('scrollTop');
-    if (window.pageYOffset > 300) {
-        scrollTopBtn.style.display = 'flex';
-        scrollTopBtn.classList.add('show');
-    } else {
-        scrollTopBtn.classList.remove('show');
-        setTimeout(() => {
-            if (window.pageYOffset <= 300) {
-                scrollTopBtn.style.display = 'none';
-            }
-        }, 300);
-    }
-}
-
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
-
-function animateButtons() {
-    const buttons = document.querySelectorAll('.btn, .social-link, .main-nav a');
     
-    buttons.forEach(btn => {
-        btn.addEventListener('mouseenter', () => {
-            btn.style.transform = 'translateY(-3px)';
-            btn.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)';
-        });
-        
-        btn.addEventListener('mouseleave', () => {
-            btn.style.transform = '';
-            btn.style.boxShadow = '';
-        });
-        
-        btn.addEventListener('mousedown', () => {
-            btn.style.transform = 'translateY(1px)';
-        });
-        
-        btn.addEventListener('mouseup', () => {
-            btn.style.transform = 'translateY(-3px)';
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            menuToggle.classList.remove('active');
+            mainNav.classList.remove('active');
+            document.body.classList.remove('no-scroll');
         });
     });
-}
-
-/* ========== ЗАГРУЗКА ДАННЫХ ========== */
-
-function loadHotelInfo() {
-    fetch('php/api/hotel.php')
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                updateHotelInfo(data);
-            } else {
-                showError('Ошибка загрузки информации о гостинице');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading hotel info:', error);
-            showError('Не удалось загрузить информацию о гостинице');
-        });
-}
-
-function updateHotelInfo(data) {
-    document.getElementById('hotel-name').textContent = data.name;
-    document.getElementById('hotel-location').textContent = data.location;
-    document.getElementById('slogan').textContent = data.slogan;
-    document.getElementById('address').textContent = data.address;
-    document.getElementById('working-hours').textContent = data.working_hours;
-    document.getElementById('phone').textContent = data.phone;
-    document.getElementById('email').textContent = data.email;
-    document.getElementById('social-vk').href = data.vk_link;
-    document.getElementById('social-tg').href = data.tg_link;
-    document.getElementById('social-inst').href = data.inst_link;
-}
-
-function loadFeaturedRooms() {
-    showLoadingRooms();
     
-    fetch('php/api/rooms.php?featured=1')
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.rooms.length > 0) {
-                displayFeaturedRooms(data.rooms);
-            } else {
-                showNoRoomsMessage();
-            }
-        })
-        .catch(error => {
-            console.error('Error loading featured rooms:', error);
-            showError('Не удалось загрузить номера');
-        });
-}
-
-function showLoadingRooms() {
-    const roomsContainer = document.getElementById('featured-rooms');
-    roomsContainer.innerHTML = '';
-    
-    // Создаем 3 карточки-заглушки
-    for (let i = 0; i < 3; i++) {
-        const skeleton = document.createElement('div');
-        skeleton.className = 'room-card loading';
-        skeleton.innerHTML = `
-            <div class="room-image">
-                <div class="image-placeholder"></div>
-            </div>
-            <div class="room-card-content">
-                <h3 class="loading-text"></h3>
-                <p class="room-type loading-text"></p>
-                <p class="room-size loading-text"></p>
-                <p class="room-price loading-text"></p>
-                <button class="btn book-btn loading" disabled>Забронировать</button>
-            </div>
-        `;
-        roomsContainer.appendChild(skeleton);
-    }
-}
-
-function displayFeaturedRooms(rooms) {
-    const roomsContainer = document.getElementById('featured-rooms');
-    roomsContainer.innerHTML = '';
-    
-    rooms.forEach((room, index) => {
-        const roomElement = createRoomElement(room);
-        roomElement.setAttribute('data-aos', 'fade-up');
-        roomElement.setAttribute('data-aos-delay', index * 100);
-        roomsContainer.appendChild(roomElement);
-    });
-    
-    initBookButtons();
-}
-
-function createRoomElement(room) {
-    const roomElement = document.createElement('div');
-    roomElement.className = 'room-card';
-    roomElement.innerHTML = `
-        <div class="room-image">
-            <img src="${room.image_url}" alt="${room.name}" loading="lazy">
-            <div class="room-overlay">
-                <button class="btn btn-outline view-details">Подробнее</button>
-            </div>
-        </div>
-        <div class="room-card-content">
-            <h3>${room.name}</h3>
-            <p class="room-type">Для ${getPetTypeName(room.pet_type)}</p>
-            <p class="room-size">Размер: ${room.size} кв.м</p>
-            <p class="room-price">${room.price_per_night} руб/сутки</p>
-            <button class="btn book-btn" data-room-id="${room.id}">Забронировать</button>
-        </div>
-    `;
-    return roomElement;
-}
-
-function loadReviews() {
-    showLoadingReviews();
-    
-    fetch('php/api/reviews.php?limit=5')
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.reviews.length > 0) {
-                displayReviews(data.reviews);
-            } else {
-                showNoReviewsMessage();
-            }
-        })
-        .catch(error => {
-            console.error('Error loading reviews:', error);
-            showError('Не удалось загрузить отзывы');
-        });
-}
-
-function showLoadingReviews() {
-    const reviewsContainer = document.getElementById('reviews-slider');
-    reviewsContainer.innerHTML = '';
-    
-    // Создаем 3 отзыва-заглушки
-    for (let i = 0; i < 3; i++) {
-        const skeleton = document.createElement('div');
-        skeleton.className = 'review-card loading';
-        skeleton.innerHTML = `
-            <div class="review-header">
-                <div class="avatar loading"></div>
-                <div>
-                    <h4 class="loading-text"></h4>
-                    <div class="rating">★★★★★</div>
-                </div>
-            </div>
-            <p class="pet-info loading-text"></p>
-            <p class="review-text loading-text"></p>
-            <p class="review-date loading-text"></p>
-        `;
-        reviewsContainer.appendChild(skeleton);
-    }
-}
-
-function displayReviews(reviews) {
-    const reviewsContainer = document.getElementById('reviews-slider');
-    reviewsContainer.innerHTML = '';
-    
-    reviews.forEach(review => {
-        const reviewElement = createReviewElement(review);
-        reviewsContainer.appendChild(reviewElement);
-    });
-}
-
-function createReviewElement(review) {
-    // Получаем инициалы для аватарки
-    const initials = getInitials(review.author_name);
-    // Генерируем цвет на основе ID отзыва
-    const colorClass = 'avatar-' + (review.id % 7 + 1);
-    
-    const reviewElement = document.createElement('div');
-    reviewElement.className = 'review-card';
-    reviewElement.innerHTML = `
-        <div class="review-header">
-            <div class="avatar ${colorClass}">${initials}</div>
-            <div>
-                <h4>${review.author_name}</h4>
-                <div class="rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-            </div>
-        </div>
-        <p class="pet-info">Питомец: ${review.pet_name} (${getPetTypeName(review.pet_type)})</p>
-        <p class="review-text">${review.comment}</p>
-        <p class="review-date">${formatDate(review.created_at)}</p>
-    `;
-    return reviewElement;
-}
-
-/* ========== МОДАЛЬНЫЕ ОКНА ========== */
-
-function initModals() {
-    const modal = document.getElementById('booking-modal');
-    const successModal = document.getElementById('success-modal');
-    const closeButtons = document.querySelectorAll('.close');
-    const closeSuccess = document.getElementById('close-success');
-    
-    // Открытие модального окна бронирования
-    window.openBookingModal = function(roomId) {
-        document.getElementById('room-id').value = roomId;
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        
-        // Анимация появления
-        modal.style.animation = 'fadeIn 0.3s ease-out';
-    };
-    
-    // Закрытие модальных окон
-    function closeModals() {
-        modal.style.animation = 'fadeOut 0.3s ease-out';
-        successModal.style.animation = 'fadeOut 0.3s ease-out';
-        
-        setTimeout(() => {
-            modal.style.display = 'none';
-            successModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }, 300);
-    }
-    
-    // Обработчики для кнопок закрытия
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', closeModals);
-    });
-    
-    closeSuccess.addEventListener('click', closeModals);
-    
-    // Закрытие при клике вне модального окна
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModals();
-        }
-        if (e.target === successModal) {
-            closeModals();
-        }
-    });
-    
-    // Обработка формы бронирования
-    document.getElementById('booking-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        if (validateBookingForm()) {
-            submitBookingForm(this);
-        }
-    });
-    
-    // Инициализация обработчиков для кнопок бронирования
-    initBookButtons();
-}
-
-function initBookButtons() {
-    document.querySelectorAll('.book-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const roomId = this.getAttribute('data-room-id');
-            openBookingModal(roomId);
-            
-            // Анимация нажатия
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 200);
-        });
-    });
-}
-
-function validateBookingForm() {
-    let isValid = true;
-    const form = document.getElementById('booking-form');
-    const name = form.elements['name'];
-    const petName = form.elements['pet-name'];
-    const phone = form.elements['phone'];
-    const email = form.elements['email'];
-    const checkIn = form.elements['check-in'];
-    const checkOut = form.elements['check-out'];
-    
-    // Сброс предыдущих ошибок
-    resetFormErrors();
-    
-    // Валидация имени
-    if (!name.value.trim()) {
-        showFormError('name-error', 'Пожалуйста, введите ваше имя');
-        isValid = false;
-    } else if (!/^[А-Яа-яЁё\s\-\.]+$/u.test(name.value)) {
-        showFormError('name-error', 'Имя может содержать только русские буквы, пробелы, точки и тире');
-        isValid = false;
-    }
-    
-    // Валидация имени питомца
-    if (!petName.value.trim()) {
-        showFormError('pet-name-error', 'Пожалуйста, введите имя питомца');
-        isValid = false;
-    } else if (!/^[A-Za-zА-Яа-яЁё\s\-]+$/u.test(petName.value)) {
-        showFormError('pet-name-error', 'Имя питомца может содержать только буквы, пробелы и тире');
-        isValid = false;
-    }
-    
-    // Валидация телефона
-    if (!phone.value.trim()) {
-        showFormError('phone-error', 'Пожалуйста, введите телефон');
-        isValid = false;
-    } else if (!/^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/.test(phone.value)) {
-        showFormError('phone-error', 'Телефон должен быть в формате +7(XXX)XXX-XX-XX');
-        isValid = false;
-    }
-    
-    // Валидация email
-    if (!email.value.trim()) {
-        showFormError('email-error', 'Пожалуйста, введите email');
-        isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-        showFormError('email-error', 'Пожалуйста, введите корректный email');
-        isValid = false;
-    }
-    
-    // Валидация дат
-    const today = new Date().toISOString().split('T')[0];
-    if (!checkIn.value) {
-        showFormError('check-in-error', 'Пожалуйста, выберите дату заезда');
-        isValid = false;
-    } else if (checkIn.value < today) {
-        showFormError('check-in-error', 'Дата заезда не может быть раньше сегодняшнего дня');
-        isValid = false;
-    }
-    
-    if (!checkOut.value) {
-        showFormError('check-out-error', 'Пожалуйста, выберите дату выезда');
-        isValid = false;
-    } else if (checkOut.value <= checkIn.value) {
-        showFormError('check-out-error', 'Дата выезда должна быть позже даты заезда');
-        isValid = false;
-    }
-    
-    return isValid;
-}
-
-function resetFormErrors() {
-    const errorMessages = document.querySelectorAll('.error-message');
-    errorMessages.forEach(el => {
-        el.style.display = 'none';
-    });
-}
-
-function showFormError(id, message) {
-    const errorElement = document.getElementById(id);
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-    
-    // Анимация ошибки
-    errorElement.style.animation = 'shake 0.5s ease';
-    setTimeout(() => {
-        errorElement.style.animation = '';
-    }, 500);
-}
-
-function submitBookingForm(form) {
-    const formData = {
-        room_id: form.elements['room-id'].value,
-        customer_name: form.elements['name'].value,
-        pet_name: form.elements['pet-name'].value,
-        phone: form.elements['phone'].value,
-        email: form.elements['email'].value,
-        check_in: form.elements['check-in'].value,
-        check_out: form.elements['check-out'].value
-    };
-    
-    // Показываем индикатор загрузки
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
-    submitBtn.disabled = true;
-    
-    // Отправка данных на сервер
-    fetch('php/api/bookings.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            // Закрываем окно бронирования и открываем окно успеха
-            document.getElementById('booking-modal').style.display = 'none';
-            document.getElementById('success-modal').style.display = 'flex';
-            
-            // Очищаем форму
-            form.reset();
-        } else {
-            showError(data.message || 'Произошла ошибка при бронировании');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showError('Произошла ошибка при отправке формы');
-    })
-    .finally(() => {
-        // Восстанавливаем кнопку
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
-    });
-}
-
-/* ========== СЛАЙДЕР ОТЗЫВОВ ========== */
-
-function initReviewsSlider() {
-    const slider = document.getElementById('reviews-slider');
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    let momentumID;
-    let velX = 0;
-    let lastX = 0;
-    let timestamp = 0;
-    let lastTimestamp = 0;
-
-    slider.addEventListener('mousedown', (e) => {
-        isDown = true;
-        slider.classList.add('active');
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-        cancelMomentumTracking();
-    });
-
-    slider.addEventListener('mouseleave', () => {
-        isDown = false;
-        slider.classList.remove('active');
-    });
-
-    slider.addEventListener('mouseup', () => {
-        isDown = false;
-        slider.classList.remove('active');
-        beginMomentumTracking();
-    });
-
-    slider.addEventListener('mousemove', (e) => {
-        if(!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2;
-        slider.scrollLeft = scrollLeft - walk;
-    });
-
-    // Добавляем инерцию для плавности
-    function beginMomentumTracking() {
-        cancelMomentumTracking();
-        momentumID = requestAnimationFrame(momentumLoop);
-        lastTimestamp = performance.now();
-        lastX = slider.scrollLeft;
-        velX = 0;
-    }
-
-    function cancelMomentumTracking() {
-        cancelAnimationFrame(momentumID);
-    }
-
-    function momentumLoop(currentTimestamp) {
-        const deltaX = slider.scrollLeft - lastX;
-        const deltaTime = currentTimestamp - lastTimestamp;
-        
-        if (deltaTime) {
-            velX = deltaX / deltaTime;
-            lastX = slider.scrollLeft;
-            lastTimestamp = currentTimestamp;
-            
-            if (Math.abs(velX) > 0.5) {
-                slider.scrollLeft += velX * 16;
-            }
-        }
-        
-        momentumID = requestAnimationFrame(momentumLoop);
-    }
-
-    // Добавляем обработчики для тач-устройств
-    slider.addEventListener('touchstart', (e) => {
-        isDown = true;
-        slider.classList.add('active');
-        startX = e.touches[0].pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-        cancelMomentumTracking();
-    }, {passive: true});
-
-    slider.addEventListener('touchend', () => {
-        isDown = false;
-        slider.classList.remove('active');
-        beginMomentumTracking();
-    }, {passive: true});
-
-    slider.addEventListener('touchmove', (e) => {
-        if(!isDown) return;
-        e.preventDefault();
-        const x = e.touches[0].pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2;
-        slider.scrollLeft = scrollLeft - walk;
-    }, {passive: false});
-}
-
-/* ========== ПЛАВНАЯ ПРОКРУТКА ========== */
-
-function initSmoothScroll() {
+    // ======================
+    // Плавная прокрутка
+    // ======================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -639,109 +32,290 @@ function initSmoothScroll() {
             
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
+                const headerHeight = document.querySelector('.header').offsetHeight;
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                
                 window.scrollTo({
-                    top: targetElement.offsetTop - 100,
+                    top: targetPosition,
                     behavior: 'smooth'
                 });
-                
-                // Обновляем активный пункт меню
-                updateActiveNavLink(targetId);
             }
         });
     });
-}
-
-function updateActiveNavLink(targetId) {
-    document.querySelectorAll('.main-nav a').forEach(link => {
-        link.classList.remove('active');
+    
+    // ======================
+    // Фиксированная шапка
+    // ======================
+    const header = document.querySelector('.header');
+    let lastScroll = 0;
+    
+    window.addEventListener('scroll', function() {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll <= 0) {
+            header.classList.remove('scrolled');
+            return;
+        }
+        
+        if (currentScroll > lastScroll && currentScroll > 100) {
+            // Прокрутка вниз
+            header.classList.add('hide');
+        } else {
+            // Прокрутка вверх
+            header.classList.remove('hide');
+        }
+        
+        if (currentScroll > 100) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+        
+        lastScroll = currentScroll;
     });
     
-    document.querySelector(`.main-nav a[href="${targetId}"]`).classList.add('active');
-}
-
-/* ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ========== */
-
-function getInitials(name) {
-    return name.split(' ')
-        .map(part => part.charAt(0).toUpperCase())
-        .join('')
-        .substring(0, 2);
-}
-
-function getPetTypeName(petType) {
-    switch (petType) {
-        case 'cat': return 'кошек';
-        case 'dog': return 'собак';
-        case 'other': return 'других животных';
-        default: return petType;
+    // ======================
+    // Кнопка "Наверх"
+    // ======================
+    const scrollTop = document.querySelector('.scroll-top');
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            scrollTop.classList.add('show');
+        } else {
+            scrollTop.classList.remove('show');
+        }
+    });
+    
+    // ======================
+    // Слайдер отзывов
+    // ======================
+    const reviewsSlider = document.querySelector('.reviews-slider');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    
+    if (reviewsSlider) {
+        reviewsSlider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            reviewsSlider.classList.add('active');
+            startX = e.pageX - reviewsSlider.offsetLeft;
+            scrollLeft = reviewsSlider.scrollLeft;
+        });
+        
+        reviewsSlider.addEventListener('mouseleave', () => {
+            isDown = false;
+            reviewsSlider.classList.remove('active');
+        });
+        
+        reviewsSlider.addEventListener('mouseup', () => {
+            isDown = false;
+            reviewsSlider.classList.remove('active');
+        });
+        
+        reviewsSlider.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - reviewsSlider.offsetLeft;
+            const walk = (x - startX) * 2;
+            reviewsSlider.scrollLeft = scrollLeft - walk;
+        });
+        
+        // Для тач-устройств
+        reviewsSlider.addEventListener('touchstart', (e) => {
+            isDown = true;
+            reviewsSlider.classList.add('active');
+            startX = e.touches[0].pageX - reviewsSlider.offsetLeft;
+            scrollLeft = reviewsSlider.scrollLeft;
+        });
+        
+        reviewsSlider.addEventListener('touchend', () => {
+            isDown = false;
+            reviewsSlider.classList.remove('active');
+        });
+        
+        reviewsSlider.addEventListener('touchmove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.touches[0].pageX - reviewsSlider.offsetLeft;
+            const walk = (x - startX) * 2;
+            reviewsSlider.scrollLeft = scrollLeft - walk;
+        });
     }
-}
-
-function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('ru-RU', options);
-}
-
-function showError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'global-error';
-    errorDiv.innerHTML = `
-        <div class="error-content">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>${message}</span>
-            <button class="close-error"><i class="fas fa-times"></i></button>
-        </div>
-    `;
     
-    document.body.appendChild(errorDiv);
+    // ======================
+    // Анимации при прокрутке
+    // ======================
+    const animateElements = () => {
+        const elements = document.querySelectorAll('[data-aos]');
+        const windowHeight = window.innerHeight;
+        const windowTop = window.pageYOffset;
+        const windowBottom = windowTop + windowHeight;
+        
+        elements.forEach(element => {
+            const elementHeight = element.offsetHeight;
+            const elementTop = element.getBoundingClientRect().top + windowTop;
+            const elementBottom = elementTop + elementHeight;
+            
+            // Проверяем, находится ли элемент в области видимости
+            if (elementBottom >= windowTop && elementTop <= windowBottom) {
+                element.classList.add('aos-animate');
+            } else {
+                // Опционально: удаляем класс при скролле назад
+                // element.classList.remove('aos-animate');
+            }
+        });
+    };
     
-    // Автоматическое скрытие через 5 секунд
-    setTimeout(() => {
-        errorDiv.classList.add('hide');
-        setTimeout(() => {
-            errorDiv.remove();
-        }, 300);
-    }, 5000);
+    window.addEventListener('scroll', animateElements);
+    window.addEventListener('load', animateElements);
     
-    // Закрытие по клику
-    errorDiv.querySelector('.close-error').addEventListener('click', () => {
-        errorDiv.classList.add('hide');
-        setTimeout(() => {
-            errorDiv.remove();
-        }, 300);
-    });
-}
-
-function showNoRoomsMessage() {
-    const roomsContainer = document.getElementById('featured-rooms');
-    roomsContainer.innerHTML = '<p class="no-rooms">Номера не найдены. Пожалуйста, попробуйте позже.</p>';
-}
-
-function showNoReviewsMessage() {
-    const reviewsContainer = document.getElementById('reviews-slider');
-    reviewsContainer.innerHTML = '<p class="no-reviews">Отзывы не найдены. Пожалуйста, попробуйте позже.</p>';
-}
-// Анимация при прокрутке
-window.addEventListener('scroll', function() {
-  const header = document.querySelector('.header');
-  if (window.scrollY > 50) {
-    header.style.background = 'rgba(0,0,0,0.7)';
-  } else {
-    header.style.background = 'rgba(0,0,0,0.2)';
-  }
+    // ======================
+    // Модальное окно бронирования
+    // ======================
+    const bookingButtons = document.querySelectorAll('.book-btn, .booking-btn');
+    const bookingModal = document.getElementById('booking-modal');
+    const closeModal = document.querySelectorAll('.modal .close');
+    
+    if (bookingModal) {
+        // Открытие модального окна
+        bookingButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const roomId = this.getAttribute('data-room-id');
+                const roomName = this.closest('.room-card')?.querySelector('h3')?.textContent;
+                
+                if (roomId) {
+                    document.getElementById('room-id').value = roomId;
+                }
+                
+                if (roomName) {
+                    bookingModal.querySelector('h2').textContent = `Бронирование: ${roomName}`;
+                }
+                
+                bookingModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        // Закрытие модального окна
+        closeModal.forEach(btn => {
+            btn.addEventListener('click', function() {
+                bookingModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // Закрытие при клике вне модального окна
+        window.addEventListener('click', function(e) {
+            if (e.target === bookingModal) {
+                bookingModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Валидация формы
+        const bookingForm = document.getElementById('booking-form');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Простая валидация
+                let isValid = true;
+                const inputs = this.querySelectorAll('input[required]');
+                
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('error');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('error');
+                    }
+                });
+                
+                if (isValid) {
+                    // Здесь можно добавить AJAX-отправку формы
+                    alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+                    this.reset();
+                    bookingModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+    }
+    
+    // ======================
+    // Инициализация карты
+    // ======================
+    function initMap() {
+        // Координаты для центра карты
+        const center = [59.938635, 30.323118];
+        
+        // Создание карты
+        const map = new ymaps.Map('map', {
+            center: center,
+            zoom: 15
+        });
+        
+        // Добавление метки
+        const placemark = new ymaps.Placemark(center, {
+            hintContent: 'Гостиница "Котейка"',
+            balloonContent: 'ул. Котикова, 8, Санкт-Петербург'
+        }, {
+            iconLayout: 'default#image',
+            iconImageHref: 'images/map-marker.png',
+            iconImageSize: [40, 40],
+            iconImageOffset: [-20, -40]
+        });
+        
+        map.geoObjects.add(placemark);
+        
+        // Отключение скролла колесом мыши
+        map.behaviors.disable('scrollZoom');
+    }
+    
+    // Проверяем, подключен ли API Яндекс.Карт
+    if (typeof ymaps !== 'undefined') {
+        ymaps.ready(initMap);
+    } else {
+        // Если API не загружен, можно загрузить его динамически
+        const script = document.createElement('script');
+        script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&onload=initMap';
+        document.head.appendChild(script);
+    }
+    
+    // ======================
+    // Активный пункт меню при скролле
+    // ======================
+    const sections = document.querySelectorAll('section[id]');
+    
+    function updateActiveNav() {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            
+            if (window.pageYOffset >= sectionTop - headerHeight - 50 && 
+                window.pageYOffset < sectionTop + sectionHeight - headerHeight - 50) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    window.addEventListener('scroll', updateActiveNav);
+    
+    // ======================
+    // Инициализация при загрузке
+    // ======================
+    updateActiveNav();
+    header.classList.add('scrolled');
 });
-
-// Плавное появление элементов
-function animateOnScroll() {
-  const elements = document.querySelectorAll('.room-card, .benefit-card');
-  elements.forEach(el => {
-    const elPosition = el.getBoundingClientRect().top;
-    const screenPosition = window.innerHeight / 1.3;
-    
-    if(elPosition < screenPosition) {
-      el.classList.add('animate');
-    }
-  });
-}
-
-window.addEventListener('scroll', animateOnScroll);
