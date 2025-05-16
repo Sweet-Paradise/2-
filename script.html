@@ -1,0 +1,409 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация анимаций при прокрутке
+    initScrollAnimations();
+    
+    // Загрузка данных
+    loadHotelInfo();
+    loadFeaturedRooms();
+    loadReviews();
+    
+    // Инициализация модального окна
+    initModal();
+    
+    // Инициализация слайдера отзывов
+    initReviewsSlider();
+    
+    // Плавная прокрутка для якорей
+    initSmoothScroll();
+    
+    // Анимация кнопок
+    animateButtons();
+});
+
+function initScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('[data-aos]').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+function loadHotelInfo() {
+    fetch('php/api/hotel.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('hotel-name').textContent = data.name;
+                document.getElementById('hotel-location').textContent = data.location;
+                document.getElementById('slogan').textContent = data.slogan;
+                document.getElementById('address').textContent = data.address;
+                document.getElementById('working-hours').textContent = data.working_hours;
+                document.getElementById('phone').textContent = data.phone;
+                document.getElementById('email').textContent = data.email;
+                document.getElementById('social-vk').href = data.vk_link;
+                document.getElementById('social-tg').href = data.tg_link;
+                document.getElementById('social-inst').href = data.inst_link;
+            }
+        })
+        .catch(error => console.error('Error loading hotel info:', error));
+}
+
+function loadFeaturedRooms() {
+    fetch('php/api/rooms.php?featured=1')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.rooms.length > 0) {
+                const roomsContainer = document.getElementById('featured-rooms');
+                roomsContainer.innerHTML = '';
+                
+                data.rooms.forEach((room, index) => {
+                    const roomElement = createRoomElement(room);
+                    // Добавляем атрибут для анимации с задержкой
+                    roomElement.setAttribute('data-aos', 'fade-up');
+                    roomElement.setAttribute('data-aos-delay', index * 100);
+                    roomsContainer.appendChild(roomElement);
+                });
+                
+                // Инициализация обработчиков для кнопок бронирования
+                initBookButtons();
+            }
+        })
+        .catch(error => console.error('Error loading featured rooms:', error));
+}
+
+function loadReviews() {
+    fetch('php/api/reviews.php?limit=5')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.reviews.length > 0) {
+                const reviewsContainer = document.getElementById('reviews-slider');
+                reviewsContainer.innerHTML = '';
+                
+                data.reviews.forEach((review, index) => {
+                    const reviewElement = createReviewElement(review);
+                    reviewsContainer.appendChild(reviewElement);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading reviews:', error));
+}
+
+function createRoomElement(room) {
+    const roomElement = document.createElement('div');
+    roomElement.className = 'room-card';
+    roomElement.innerHTML = `
+        <div class="room-image">
+<img src="${room.image_url}" alt="${room.name}">
+        </div>
+        <div class="room-card-content">
+            <h3>${room.name}</h3>
+            <p class="room-type">Для ${getPetTypeName(room.pet_type)}</p>
+            <p class="room-size">Размер: ${room.size} кв.м</p>
+            <p class="room-price">${room.price_per_night} руб/сутки</p>
+            <button class="btn book-btn" data-room-id="${room.id}">Забронировать</button>
+        </div>
+    ;
+    return roomElement;
+}
+
+function createReviewElement(review) {
+    // Получаем первую букву имени для аватарки
+    const initial = review.author_name.charAt(0).toUpperCase();
+    // Генерируем цвет на основе ID отзыва
+    const colorClass = 'avatar-' + (review.id % 7 + 1);
+    
+    const reviewElement = document.createElement('div');
+    reviewElement.className = 'review-card';
+    reviewElement.innerHTML = 
+        <div class="review-header">
+            <div class="avatar ${colorClass}">${initial}</div>
+            <div>
+                <h4>${review.author_name}</h4>
+                <div class="rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+            </div>
+        </div>
+        <p class="pet-info">Питомец: ${review.pet_name} (${getPetTypeName(review.pet_type)})</p>
+        <p class="review-text">${review.comment}</p>
+        <p class="review-date">${formatDate(review.created_at)}</p>
+    `;
+    return reviewElement;
+}
+
+function initReviewsSlider() {
+    const slider = document.getElementById('reviews-slider');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.classList.add('active');
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+        isDown = false;
+        slider.classList.remove('active');
+    });
+
+    slider.addEventListener('mouseup', () => {
+        isDown = false;
+        slider.classList.remove('active');
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+        if(!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2;
+        slider.scrollLeft = scrollLeft - walk;
+    });
+}
+
+function initModal() {
+    const modal = document.getElementById('booking-modal');
+    const successModal = document.getElementById('success-modal');
+    const closeButtons = document.querySelectorAll('.close');
+    const closeSuccess = document.getElementById('close-success');
+    
+    // Открытие модального окна бронирования
+    function openBookingModal(roomId) {
+        document.getElementById('room-id').value = roomId;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Закрытие модальных окон
+    function closeModals() {
+        modal.style.display = 'none';
+        successModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Обработчики для кнопок закрытия
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', closeModals);
+    });
+    
+    closeSuccess.addEventListener('click', closeModals);
+    
+    // Закрытие при клике вне модального окна
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModals();
+        }
+        if (e.target === successModal) {
+            closeModals();
+        }
+    });
+    
+    // Обработка формы бронирования
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Валидация формы
+        if (validateForm()) {
+            const formData = {
+                room_id: document.getElementById('room-id').value,
+customer_name: document.getElementById('name').value,
+                pet_name: document.getElementById('pet-name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                check_in: document.getElementById('check-in').value,
+                check_out: document.getElementById('check-out').value
+            };
+            
+            // Отправка данных на сервер
+            fetch('php/api/bookings.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Закрываем окно бронирования и открываем окно успеха
+                    modal.style.display = 'none';
+                    successModal.style.display = 'flex';
+                    
+                    // Очищаем форму
+                    this.reset();
+                } else {
+                    alert(data.message || 'Произошла ошибка при бронировании');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при отправке формы');
+            });
+        }
+    });
+    
+    // Инициализация обработчиков для кнопок бронирования
+    initBookButtons();
+}
+
+function initBookButtons() {
+    document.querySelectorAll('.book-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const roomId = this.getAttribute('data-room-id');
+            openBookingModal(roomId);
+        });
+    });
+}
+
+function validateForm() {
+    let isValid = true;
+    const name = document.getElementById('name');
+    const petName = document.getElementById('pet-name');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+    const checkIn = document.getElementById('check-in');
+    const checkOut = document.getElementById('check-out');
+    
+    // Валидация имени
+    if (!name.value.trim()) {
+        showError('name-error', 'Пожалуйста, введите ваше имя');
+        isValid = false;
+    } else if (!/^[А-Яа-яЁё\s\-\.]+$/u.test(name.value)) {
+        showError('name-error', 'Имя может содержать только русские буквы, пробелы, точки и тире');
+        isValid = false;
+    } else {
+        hideError('name-error');
+    }
+    
+    // Валидация имени питомца
+    if (!petName.value.trim()) {
+        showError('pet-name-error', 'Пожалуйста, введите имя питомца');
+        isValid = false;
+    } else if (!/^[A-Za-zА-Яа-яЁё\s\-]+$/u.test(petName.value)) {
+        showError('pet-name-error', 'Имя питомца может содержать только буквы, пробелы и тире');
+        isValid = false;
+    } else {
+        hideError('pet-name-error');
+    }
+    
+    // Валидация телефона
+    if (!phone.value.trim()) {
+        showError('phone-error', 'Пожалуйста, введите телефон');
+        isValid = false;
+    } else if (!/^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/.test(phone.value)) {
+        showError('phone-error', 'Телефон должен быть в формате +7(XXX)XXX-XX-XX');
+        isValid = false;
+    } else {
+        hideError('phone-error');
+    }
+    
+    // Валидация email
+    if (!email.value.trim()) {
+        showError('email-error', 'Пожалуйста, введите email');
+        isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        showError('email-error', 'Пожалуйста, введите корректный email');
+        isValid = false;
+    } else {
+        hideError('email-error');
+    }
+    
+    // Валидация дат
+    const today = new Date().toISOString().split('T')[0];
+    if (!checkIn.value) {
+        showError('check-in-error', 'Пожалуйста, выберите дату заезда');
+isValid = false;
+    } else if (checkIn.value < today) {
+        showError('check-in-error', 'Дата заезда не может быть раньше сегодняшнего дня');
+        isValid = false;
+    } else {
+        hideError('check-in-error');
+    }
+    
+    if (!checkOut.value) {
+        showError('check-out-error', 'Пожалуйста, выберите дату выезда');
+        isValid = false;
+    } else if (checkOut.value <= checkIn.value) {
+        showError('check-out-error', 'Дата выезда должна быть позже даты заезда');
+        isValid = false;
+    } else {
+        hideError('check-out-error');
+    }
+    
+    return isValid;
+}
+
+function showError(id, message) {
+    const errorElement = document.getElementById(id);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+    
+    // Анимация ошибки
+    errorElement.style.animation = 'shake 0.5s ease';
+    setTimeout(() => {
+        errorElement.style.animation = '';
+    }, 500);
+}
+
+function hideError(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+function animateButtons() {
+    const buttons = document.querySelectorAll('.btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'translateY(-3px)';
+            btn.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)';
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+            btn.style.boxShadow = '';
+        });
+    });
+}
+
+function getPetTypeName(petType) {
+    switch (petType) {
+        case 'cat': return 'кошек';
+        case 'dog': return 'собак';
+        case 'other': return 'других животных';
+        default: return petType;
+    }
+}
+
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('ru-RU', options);
+}
