@@ -1,143 +1,152 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Котейка - отель для питомцев</title>
+    <title>Котейка - Отель для питомцев</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Шапка -->
     <header>
         <div class="container">
-            <div class="logo">Котейка</div>
-            <div class="slogan">Отель для пушистых друзей</div>
+            <div class="header-content">
+                <div class="logo">
+                    <span>Котейка</span>
+                    <div class="slogan">Отель для пушистых друзей</div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html" class="active">Главная</a></li>
+                        <li><a href="search.html">Номера</a></li>
+                        <li><a href="#reviews">Отзывы</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                        <li><a href="booking.html" class="btn">Мои бронирования</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </header>
     
-    <!-- Навигация -->
-    <nav>
-        <div class="container">
-            <ul>
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="search.html">Номера</a></li>
-                <li><a href="#reviews">Отзывы</a></li>
-                <li><a href="#contacts">Контакты</a></li>
-                <li><a href="booking.html">Мои бронирования</a></li>
-            </ul>
-        </div>
-    </nav>
-    
     <!-- Герой-баннер -->
     <section class="hero" style="background-image: url('img/hero-bg.jpg')">
-        <div class="hero-content">
-            <h1>Комфортный отдых для ваших питомцев</h1>
-            <p>Лучший отель для кошек и собак с заботой и вниманием</p>
-            <a href="search.html" class="btn">Выбрать номер</a>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Комфортный отдых для ваших питомцев</h1>
+                <p>Лучший отель для кошек и собак с заботой и вниманием</p>
+                <a href="search.html" class="btn">Выбрать номер</a>
+            </div>
         </div>
     </section>
     
     <!-- Основное содержимое -->
-    <main class="container">
+    <main>
         <!-- Популярные номера -->
         <section class="section">
-            <h2 class="section-title">Популярные номера</h2>
-            <div class="room-grid">
-                <div class="room-card">
-                    <img src="img/room1.jpg" alt="Эконом для котика" class="room-img">
-                    <div class="room-info">
-                        <h3 class="room-title">Эконом для котика</h3>
-                        <div class="room-price">1000 руб.<span>/сутки</span></div>
-                        <ul class="room-features">
-                            <li>Уютный лежак</li>
-                            <li>2 миски</li>
-                            <li>Лоток с наполнителем</li>
-                            <li>Игрушка</li>
-                        </ul>
-                        <button class="btn book-btn">Забронировать</button>
+            <div class="container">
+                <h2 class="section-title">Популярные номера</h2>
+                <div class="room-grid">
+                    <div class="room-card">
+                        <img src="img/room1.jpg" alt="Эконом для котика" class="room-img">
+                        <div class="room-info">
+                            <h3 class="room-title">Эконом для котика</h3>
+                            <div class="room-price">1000 руб.<span>/сутки</span></div>
+                            <ul class="room-features">
+                                <li>Уютный лежак</li>
+                                <li>2 миски</li>
+                                <li>Лоток с наполнителем</li>
+                                <li>Игрушка</li>
+                            </ul>
+                            <button class="btn book-btn">Забронировать</button>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="room-card">
-                    <img src="img/room2.jpg" alt="Стандарт для кота" class="room-img">
-                    <div class="room-info">
-                        <h3 class="room-title">Стандарт для кота</h3>
-                        <div class="room-price">1500 руб.<span>/сутки</span></div>
-                        <ul class="room-features">
-                            <li>Просторный лежак</li>
-                            <li>2 миски</li>
-                            <li>Лоток с наполнителем</li>
-                            <li>2 игрушки</li>
-                            <li>Когтеточка</li>
-                        </ul>
-                        <button class="btn book-btn">Забронировать</button>
+                    
+                    <div class="room-card">
+                        <img src="img/room2.jpg" alt="Стандарт для кота" class="room-img">
+                        <div class="room-info">
+                            <h3 class="room-title">Стандарт для кота</h3>
+                            <div class="room-price">1500 руб.<span>/сутки</span></div>
+                            <ul class="room-features">
+                                <li>Просторный лежак</li>
+                                <li>2 миски</li>
+                                <li>Лоток с наполнителем</li>
+                                <li>2 игрушки</li>
+                                <li>Когтеточка</li>
+                            </ul>
+                            <button class="btn book-btn">Забронировать</button>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="room-card">
-                    <img src="img/room3.jpg" alt="Люкс для кошки" class="room-img">
-                    <div class="room-info">
-                        <h3 class="room-title">Люкс для кошки</h3>
-                        <div class="room-price">2500 руб.<span>/сутки</span></div>
-                        <ul class="room-features">
-                            <li>Роскошный лежак</li>
-                            <li>2 миски</li>
-                            <li>Лоток с наполнителем</li>
-                            <li>3 игрушки</li>
-                            <li>Когтеточка</li>
-                            <li>Домик</li>
-                        </ul>
-                        <button class="btn book-btn">Забронировать</button>
+                    
+                    <div class="room-card">
+                        <img src="img/room3.jpg" alt="Люкс для кошки" class="room-img">
+                        <div class="room-info">
+                            <h3 class="room-title">Люкс для кошки</h3>
+                            <div class="room-price">2500 руб.<span>/сутки</span></div>
+                            <ul class="room-features">
+                                <li>Роскошный лежак</li>
+                                <li>2 миски</li>
+                                <li>Лоток с наполнителем</li>
+                                <li>3 игрушки</li>
+                                <li>Когтеточка</li>
+                                <li>Домик</li>
+                            </ul>
+                            <button class="btn book-btn">Забронировать</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
         
         <!-- Отзывы -->
-        <section class="section" id="reviews">
-            <h2 class="section-title">Отзывы наших клиентов</h2>
-            <div class="review-grid">
-                <div class="review-card">
-                    <div class="review-author">Анна</div>
-                    <div class="review-text">Мой кот был в восторге от номера люкс! Обслуживание на высшем уровне.</div>
-                    <div class="review-rating">★★★★★</div>
-                </div>
-                <div class="review-card">
-                    <div class="review-author">Иван</div>
-                    <div class="review-text">Оставлял своего пса на неделю, все прошло отлично, спасибо!</div>
-                    <div class="review-rating">★★★★☆</div>
-                </div>
-                <div class="review-card">
-                    <div class="review-author">Мария</div>
-                    <div class="review-text">Чисто, уютно, персонал внимательный. Рекомендую всем!</div>
-                    <div class="review-rating">★★★★★</div>
+        <section class="section reviews" id="reviews">
+            <div class="container">
+                <h2 class="section-title">Отзывы наших гостей</h2>
+                <div class="review-grid">
+                    <div class="review-card">
+                        <div class="review-author">Анна</div>
+                        <div class="review-text">Мой кот был в восторге от номера люкс! Обслуживание на высшем уровне.</div>
+                        <div class="review-rating">★★★★★</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-author">Иван</div>
+                        <div class="review-text">Оставлял своего пса на неделю, все прошло отлично, спасибо!</div>
+                        <div class="review-rating">★★★★☆</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-author">Мария</div>
+                        <div class="review-text">Чисто, уютно, персонал внимательный. Рекомендую всем!</div>
+                        <div class="review-rating">★★★★★</div>
+                    </div>
                 </div>
             </div>
         </section>
         
         <!-- Контакты -->
-        <section class="section" id="contacts">
-            <h2 class="section-title">Контакты</h2>
-            <div class="contact-info">
-                <div class="contact-card">
-                    <div class="contact-icon">🏠</div>
-                    <h3 class="contact-title">Адрес</h3>
-                    <div class="contact-item">ул. Кошачья, д. 15, кв. 42</div>
-                    <div class="contact-item">Круглосуточно, без выходных</div>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-icon">📞</div>
-                    <h3 class="contact-title">Контакты</h3>
-                    <div class="contact-item">+7 (123) 456-78-90</div>
-                    <div class="contact-item">info@koteika.ru</div>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-icon">🌐</div>
-                    <h3 class="contact-title">Соцсети</h3>
-                    <div class="social-links">
-                        <a href="#" title="ВКонтакте">🐾</a>
-                        <a href="#" title="Telegram">📱</a>
-                        <a href="#" title="Instagram">📸</a>
+        <section class="section contacts" id="contacts">
+            <div class="container">
+                <h2 class="section-title">Контакты</h2>
+                <div class="contact-grid">
+                    <div class="contact-card">
+                        <div class="contact-icon">📍</div>
+                        <h3 class="contact-title">Адрес</h3>
+                        <div class="contact-item">г. Москва, ул. Кошачья, 15</div>
+                        <div class="contact-item">Круглосуточно, без выходных</div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon">📞</div>
+                        <h3 class="contact-title">Телефон</h3>
+                        <div class="contact-item">+7 (123) 456-78-90</div>
+                        <div class="contact-item">info@koteika.ru</div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon">🌐</div>
+                        <h3 class="contact-title">Соцсети</h3>
+                        <div class="social-links">
+                            <a href="#">VK</a>
+                            <a href="#">Telegram</a>
+                            <a href="#">Instagram</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -147,16 +156,29 @@
     <!-- Подвал -->
     <footer>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">Котейка</div>
-                <div class="footer-links">
-                    <a href="index.html">Главная</a>
-                    <a href="search.html">Номера</a>
-                    <a href="#reviews">Отзывы</a>
-                    <a href="#contacts">Контакты</a>
-                    <a href="booking.html">Мои бронирования</a>
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-logo">Котейка</div>
+                    <p>Отель для ваших любимых питомцев с заботой и вниманием</p>
                 </div>
-                <div class="copyright">© 2023 Отель "Котейка". Все права защищены.</div>
+                <div class="footer-links">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="search.html">Номера</a></li>
+                        <li><a href="#reviews">Отзывы</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contacts">
+                    <h3>Контакты</h3>
+                    <p>г. Москва, ул. Кошачья, 15</p>
+                    <p>+7 (123) 456-78-90</p>
+                    <p>info@koteika.ru</p>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2023 Отель "Котейка". Все права защищены.
             </div>
         </div>
     </footer>
