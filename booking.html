@@ -5,182 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Котейка - Мои бронирования</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Шапка -->
     <header>
         <div class="container">
-            <div class="logo">Котейка</div>
-            <div class="slogan">Отель для пушистых друзей</div>
+            <div class="header-content">
+                <div class="logo">
+                    <span>Котейка</span>
+                    <div class="slogan">Отель для пушистых друзей</div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="search.html">Номера</a></li>
+                        <li><a href="index.html#reviews">Отзывы</a></li>
+                        <li><a href="index.html#contacts">Контакты</a></li>
+                        <li><a href="booking.html" class="btn active">Мои бронирования</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </header>
     
-    <nav>
-        <div class="container">
-            <ul>
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="search.html">Номера</a></li>
-                <li><a href="index.html#reviews">Отзывы</a></li>
-                <li><a href="index.html#contacts">Контакты</a></li>
-                <li><a href="booking.html" class="active">Мои бронирования</a></li>
-            </ul>
-        </div>
-    </nav>
-
+    <!-- Баннер бронирований -->
     <section class="hero" style="background-image: url('img/booking-bg.jpg')">
-        <div class="hero-content">
-            <h1>Мои бронирования</h1>
-            <p>Здесь вы можете посмотреть статус ваших заказов</p>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Мои бронирования</h1>
+                <p>Здесь вы можете посмотреть статус ваших заказов</p>
+            </div>
         </div>
     </section>
-
-    <main class="container">
-        <div class="bookings-list" id="bookings-container">
-            <!-- Бронирования будут загружены через JavaScript -->
-            <div class="no-bookings">
-                <p>У вас пока нет активных бронирований</p>
-                <a href="search.html" class="btn">Выбрать номер</a>
+    
+    <!-- Основное содержимое -->
+    <main>
+        <div class="container">
+            <div class="bookings-list" id="bookings-container">
+                <!-- Бронирования будут загружены через JavaScript -->
+                <div class="no-bookings">
+                    <p>У вас пока нет активных бронирований</p>
+                    <a href="search.html" class="btn">Выбрать номер</a>
+                </div>
             </div>
         </div>
     </main>
-
+    
+    <!-- Подвал -->
     <footer>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">Котейка</div>
-                <div class="footer-links">
-                    <a href="index.html">Главная</a>
-                    <a href="search.html">Номера</a>
-                    <a href="index.html#reviews">Отзывы</a>
-                    <a href="index.html#contacts">Контакты</a>
-                    <a href="booking.html">Мои бронирования</a>
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-logo">Котейка</div>
+                    <p>Отель для ваших любимых питомцев с заботой и вниманием</p>
                 </div>
-                <div class="copyright">© 2023 Отель "Котейка". Все права защищены.</div>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Данные бронирований (в реальном проекте будут загружаться с сервера)
-        const bookingsData = [
-            // Пример бронирования:
-            /*
-            {
-                id: 1,
-                roomId: 3,
-                title: "Люкс для кошки",
-                image: "img/room3.jpg",
-                name: "Иванов Иван",
-                petName: "Мурка",
-                checkIn: "2023-12-15",
-                checkOut: "2023-12-20",
-                status: "confirmed" // pending, confirmed, cancelled
-            }
-            */
-        ];
-
-        // Данные номеров для связи с бронированиями
-        const roomsData = [
-            {
-                id: 1,
-                title: "Эконом для котика",
-                image: "img/room1.jpg"
-            },
-            {
-                id: 2,
-                title: "Стандарт для кота",
-                image: "img/room2.jpg"
-            },
-            {
-                id: 3,
-                title: "Люкс для кошки",
-                image: "img/room3.jpg"
-            },
-            {
-                id: 4,
-                title: "Эконом для щенка",
-                image: "img/room4.jpg"
-            },
-            {
-                id: 5,
-                title: "Стандарт для собаки",
-                image: "img/room5.jpg"
-            },
-            {
-                id: 6,
-                title: "Люкс для пса",
-                image: "img/room6.jpg"
-            }
-        ];
-
-        // Загрузка бронирований при загрузке страницы
-        function loadBookings() {
-            const bookingsContainer = document.getElementById('bookings-container');
-            
-            if (bookingsData.length === 0) {
-                bookingsContainer.innerHTML = `
-                    <div class="no-bookings">
-                        <p>У вас пока нет активных бронирований</p>
-                        <a href="search.html" class="btn">Выбрать номер</a>
-                    </div>
-                `;
-                return;
-            }
-            
-            bookingsContainer.innerHTML = '';
-            
-            bookingsData.forEach(booking => {
-                const bookingItem = document.createElement('div');
-                bookingItem.className = 'booking-item';
-                
-                // Получаем данные о номере
-                const room = roomsData.find(r => r.id === booking.roomId) || {
-                    title: booking.title,
-                    image: booking.image
-                };
-                
-                // Определяем статус
-                let statusText, statusClass;
-                switch(booking.status) {
-                    case 'pending':
-                        statusText = 'На рассмотрении';
-                        statusClass = 'status-pending';
-                        break;
-                    case 'confirmed':
-                        statusText = 'Подтверждено';
-                        statusClass = 'status-confirmed';
-                        break;
-                    case 'cancelled':
-                        statusText = 'Отменено';
-                        statusClass = 'status-cancelled';
-                        break;
-                }
-                
-                bookingItem.innerHTML = `
-                    <img src="${room.image}" alt="${room.title}" class="booking-image">
-                    <div class="booking-info">
-                        <h3 class="booking-title">${room.title}</h3>
-                        <div class="booking-dates">
-                            <strong>Даты:</strong> ${formatDate(booking.checkIn)} - ${formatDate(booking.checkOut)}
-                        </div>
-                        <div class="booking-dates">
-                            <strong>Питомец:</strong> ${booking.petName}
-                        </div>
-                    </div>
-                    <div class="booking-status ${statusClass}">${statusText}</div>
-                `;
-                
-                bookingsContainer.appendChild(bookingItem);
-            });
-        }
-
-        // Форматирование даты
-        function formatDate(dateString) {
-            const options = { day: 'numeric', month: 'long' };
-            return new Date(dateString).toLocaleDateString('ru-RU', options);
-        }
-        
-        // Загрузка бронирований при загрузке страницы
-        window.addEventListener('DOMContentLoaded', loadBookings);
-    </script>
-</body>
-</html>
+                <div class="footer-links">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="search.html">Номера</a></li>
+                        <li><a href="index.html#reviews">Отзывы</a></li>
+                        <li><a href="index.html#contacts">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contacts">
+                    <h3>Контакты</h3>
+                    <p>г. Моск
